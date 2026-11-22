@@ -3427,6 +3427,7 @@ const FB_TAILLE_MAX = 900000;
 const JSZIP_URL = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
 
 var syncRef = null, syncFs = null, syncEnvoiTimer = null, syncDernierEnvoi = '', syncEtat = 'off';
+var syncPrete = false;
 var syncAppareilId = '';
 try{
   syncAppareilId = localStorage.getItem(APPAREIL_KEY) || ('a' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8));
@@ -3481,6 +3482,7 @@ function majInfosSync(){
   const box = $('sync-infos');
   if(!box) return;
   const cfg = lireConfigFirebase();
+  const integree = !!(FIREBASE_CONFIG_INTEGREE && FIREBASE_CONFIG_INTEGREE.projectId);
   let nl = {};
   try{ nl = JSON.parse(localStorage.getItem(NETLIFY_KEY) || '{}') || {}; }catch(e){}
   const ligne = (k, v) => '<div class="sync-ligne"><span>' + escapeHtml(k) + '</span><strong>' + escapeHtml(v || '—') + '</strong></div>';
@@ -3489,6 +3491,7 @@ function majInfosSync(){
     ligne('Projet', cfg ? cfg.projectId : ''),
     ligne('Domaine d\'authentification', cfg ? cfg.authDomain : ''),
     ligne('Base de données', cfg ? 'Cloud Firestore, ' + FB_COLLECTION + ' / ' + FB_DOC : ''),
+    ligne('Configuration dans la page déployée', integree ? 'oui' : 'non : téléchargez le paquet et redéployez, sinon les autres appareils ne se connectent pas'),
     '<h3 class="sync-titre">Netlify et GitHub</h3>',
     ligne('Site Netlify', nl.nom),
     ligne('Adresse du site', nl.url),
@@ -3523,6 +3526,7 @@ async function demarrerSync(){
 // Reçoit la version du serveur : seules les données confirmées par le serveur sont appliquées
 function appliquerSnapshot(snap){
   if(snap.metadata.fromCache || snap.metadata.hasPendingWrites) return;
+  syncPrete = true;
   if(!snap.exists()){ envoyerSync(true); return; }
   const d = snap.data();
   if(typeof d.donnees !== 'string') return;
@@ -3547,7 +3551,7 @@ function envoyerSync(immediat){
 }
 
 async function envoyerMaintenant(){
-  if(!syncRef || !syncFs) return;
+  if(!syncRef || !syncFs || !syncPrete) return;
   const donnees = localStorage.getItem(STORE_KEY) || '{}';
   const utilisateurs = localStorage.getItem(USERS_KEY) || '[]';
   const cle = donnees + '\u0001' + utilisateurs;
@@ -3594,6 +3598,7 @@ $('btn-fb-effacer').addEventListener('click', ()=>{
 
 $('btn-sync-maintenant').addEventListener('click', ()=>{
   if(!syncRef){ dialogueErreur('La synchronisation n\'est pas active sur cet appareil. Enregistrez d\'abord la configuration Firebase.'); return; }
+  if(!syncPrete){ dialogueErreur('Connexion à Firebase en cours. Patientez quelques secondes puis réessayez.'); return; }
   syncDernierEnvoi = '';
   envoyerSync(true);
   toast('Synchronisation demandée');
