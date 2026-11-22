@@ -725,7 +725,7 @@ nav.tabbar a.nav-action .ico{font-size:19px;line-height:1}
         <input type="password" id="nu-pass" placeholder="Mot de passe (6 car. min.)" autocomplete="new-password"/>
       </div>
       <div class="grid2" style="margin-top:8px">
-        <select id="nu-role"><option value="user">Utilisateur</option><option value="admin">Administrateur</option></select>
+        <span class="hint" style="align-self:center">Rôle : utilisateur (un seul administrateur)</span>
         <button class="btn" id="btn-add-user">➕ Ajouter</button>
       </div>
     </div>
@@ -1009,8 +1009,18 @@ function toast(msg){
 const USERS_KEY = 'notascol_users_v2';
 const SESSION_KEY = 'notascol_session_v2';
 let USERS = loadUsers();
+normaliserAdmin();
 let currentUser = null;
 let setupMode = false;
+let syncDocVide = false;
+
+// Un seul administrateur : le premier compte administrateur créé est conservé
+function normaliserAdmin(){
+  let trouve = false;
+  USERS.forEach(u=>{
+    if(u.role === 'admin'){ if(trouve) u.role = 'user'; else trouve = true; }
+  });
+}
 let loginFails = 0, lockUntil = 0;
 let pwdTargetId = null;
 
@@ -1082,12 +1092,17 @@ function hashPwd(pwd, salt){
 function isAdmin(){ return !!currentUser && currentUser.role==='admin'; }
 
 function showLogin(){
-  setupMode = USERS.length===0;
+  const syncAttendue = !!lireConfigFirebase();
+  setupMode = USERS.length===0 && syncAttendue && syncDocVide;
   $('app').style.display = 'none';
   $('login-screen').style.display = 'flex';
   $('login-sub').textContent = setupMode
     ? 'Première utilisation : créez le compte administrateur.'
-    : 'Connectez-vous pour accéder à l\'application.';
+    : (USERS.length===0
+        ? (syncAttendue
+            ? 'Synchronisation des comptes en cours…'
+            : 'Aucun compte n\'est enregistré sur cet appareil. Contactez l\'administrateur.')
+        : 'Connectez-vous pour accéder à l\'application.');
   $('login-confirm-wrap').style.display = setupMode ? 'block' : 'none';
   $('btn-login').textContent = setupMode ? 'Créer le compte administrateur' : 'Se connecter';
   $('login-err').textContent = '';
@@ -1267,7 +1282,6 @@ function renderUsers(){
       <div class="u-info"><strong>${escapeHtml(u.nom)}</strong>
         <span class="badge ${u.role==='admin'?'ok':'neu'}">${u.role==='admin'?'Administrateur':'Utilisateur'}</span>
         ${currentUser && u.id===currentUser.id ? '<span class="hint">(vous)</span>' : ''}</div>
-      ${USERS.some(x=>x.role==='admin') ? '' : `<button class="btn ghost u-role" title="Rendre administrateur">Rendre admin</button>`}
       <button class="btn ghost u-edit" title="Modifier l'identifiant et le mot de passe">✏️ Modifier</button>
       <button class="btn ghost u-prov" title="Générer un mot de passe provisoire à communiquer">🔐 Provisoire</button>
       <button class="btn bleu u-pwd" title="Changer le mot de passe">🔑</button>
@@ -1385,7 +1399,7 @@ $('btn-add-user').addEventListener('click', ()=>{
   const nomRaw = $('nu-login').value.trim();
   const login = nomRaw.toLowerCase();
   const pwd = $('nu-pass').value;
-  const role = $('nu-role').value === 'admin' ? 'admin' : 'user';
+  const role = 'user';
   if(login.length<3){ toast('L\'identifiant doit contenir au moins 3 caractères'); return; }
   if(pwd.length<6){ toast('Le mot de passe doit contenir au moins 6 caractères'); return; }
   if(USERS.some(x=>x.login===login)){ toast('Cet identifiant existe déjà'); return; }
@@ -3450,7 +3464,7 @@ setInterval(()=>{
    SYNCHRONISATION EN LIGNE (Firebase) ET PAQUET DE DÉPLOIEMENT
    ===================================================== */
 // Configuration Firebase intégrée lors du téléchargement du paquet (laisser cette ligne telle quelle)
-const FIREBASE_CONFIG_INTEGREE = /*FIREBASE_CONFIG_INJECT*/null;
+const FIREBASE_CONFIG_INTEGREE = {"apiKey": "AIzaSyCz12nLv52C2odPc5W_fvh3LXE7y6j73dc", "authDomain": "etatnotes-pro-v1.firebaseapp.com", "projectId": "etatnotes-pro-v1", "storageBucket": "etatnotes-pro-v1.firebasestorage.app", "messagingSenderId": "1014277596476", "appId": "1:1014277596476:web:e7e2428a6dc9ef7cf2aa39"};
 const FB_URL = 'https://www.gstatic.com/firebasejs/10.12.2/';
 const FB_CONFIG_KEY = 'notascol_firebase_config';
 const NETLIFY_KEY = 'notascol_netlify_info';
@@ -3561,13 +3575,25 @@ async function demarrerSync(){
 function appliquerSnapshot(snap){
   if(snap.metadata.fromCache || snap.metadata.hasPendingWrites) return;
   syncPrete = true;
-  if(!snap.exists()){ envoyerSync(true); return; }
+  if(!snap.exists()){
+    syncDocVide = true;
+    envoyerSync(true);
+    if(!currentUser) showLogin();
+    return;
+  }
   const d = snap.data();
   if(typeof d.donnees !== 'string') return;
   const distantU = typeof d.utilisateurs === 'string' ? d.utilisateurs : '[]';
-  if(d.appareil === syncAppareilId){ majEtatSync('ok', 'synchronisé à ' + heureSync()); return; }
   const localD = localStorage.getItem(STORE_KEY) || '{}';
   const localU = localStorage.getItem(USERS_KEY) || '[]';
+  // Aucun compte sur le serveur : ne jamais effacer les comptes locaux
+  if(distantU === '[]'){
+    if(localU !== '[]'){ envoyerSync(true); return; }
+    syncDocVide = true;
+    if(!currentUser) showLogin();
+    return;
+  }
+  if(d.appareil === syncAppareilId){ majEtatSync('ok', 'synchronisé à ' + heureSync()); return; }
   if(d.donnees === localD && distantU === localU){ majEtatSync('ok', 'synchronisé à ' + heureSync()); return; }
   try{
     localStorage.setItem(STORE_KEY, d.donnees);
