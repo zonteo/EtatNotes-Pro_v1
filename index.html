@@ -257,6 +257,16 @@ table.saisie td.calc{font-weight:700;white-space:nowrap}
 .login-pied{margin-top:16px;padding-top:12px;border-top:1px solid var(--gris-bord);text-align:center;font-size:12px;color:#5b6878;line-height:1.55}
 .login-pied p{margin:0}
 .login-pied .login-droits{margin-top:6px;font-size:11px}
+.sync-etat{padding:8px 10px;border-radius:9px;font-size:13px;font-weight:600;margin-bottom:10px;background:#f1f5f9;color:#334155}
+.sync-ok{background:#dcfce7;color:#065a2c}
+.sync-erreur{background:#fee2e2;color:#991b1b}
+.sync-envoi,.sync-attente{background:#fef3c7;color:#7c4a03}
+.sync-infos{font-size:13px}
+.sync-titre{font-size:13px;margin:10px 0 4px;color:var(--vert-fonce)}
+.sync-ligne{display:flex;justify-content:space-between;gap:10px;padding:4px 0;border-bottom:1px dashed var(--gris-bord)}
+.sync-ligne span{color:#5b6878;flex:none}
+.sync-ligne strong{text-align:right;word-break:break-all}
+.sync-regles{background:#0f172a;color:#e2e8f0;padding:10px;border-radius:9px;font-size:12px;overflow-x:auto;white-space:pre}
 .hdr-user{margin-left:0;display:flex;align-items:center;gap:8px;font-size:12px;text-align:right}
 .hdr-btn{background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.55);border-radius:8px;padding:6px 10px;font-size:12px;font-weight:700;cursor:pointer}
 @media(max-width:480px){header.appbar .sub{display:none}#user-badge{max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}}
@@ -749,6 +759,45 @@ table.saisie td.calc{font-weight:700;white-space:nowrap}
       </div>
     </div>
 
+    <div class="card" id="card-sync">
+      <h2><span class="ico">☁️</span> Synchronisation et déploiement</h2>
+      <p class="hint" style="margin:0 0 10px">Les données sont synchronisées entre tous les appareils via Firebase. Ne saisissez jamais de mot de passe dans cette page.</p>
+      <div id="sync-etat" class="sync-etat sync-off">Synchronisation : non configurée</div>
+      <div id="sync-infos" class="sync-infos"></div>
+      <label class="fld" style="margin-top:12px">Configuration Firebase (objet firebaseConfig copié depuis la console)</label>
+      <textarea id="fb-config" rows="6" placeholder="apiKey, authDomain, projectId, storageBucket, messagingSenderId, appId"></textarea>
+      <div class="row-btns" style="margin-top:8px">
+        <button class="btn" id="btn-fb-enregistrer">💾 Enregistrer et connecter</button>
+        <button class="btn orange" id="btn-sync-maintenant">🔄 Synchroniser maintenant</button>
+        <button class="btn ghost" id="btn-fb-effacer">Effacer la configuration</button>
+      </div>
+      <div class="grid2" style="margin-top:14px">
+        <div><label class="fld">Nom du site Netlify</label><input id="nl-nom" placeholder="etatnotes-pro"/></div>
+        <div><label class="fld">Adresse du site</label><input id="nl-url" placeholder="https://etatnotes-pro.netlify.app"/></div>
+        <div class="full"><label class="fld">Dépôt GitHub</label><input id="nl-depot" placeholder="https://github.com/compte/etatnotes-pro"/></div>
+      </div>
+      <div class="row-btns" style="margin-top:8px"><button class="btn" id="btn-nl-enregistrer">💾 Enregistrer les informations Netlify</button></div>
+      <div class="row-btns" style="margin-top:14px"><button class="btn orange" id="btn-paquet">📦 Télécharger le paquet de déploiement</button></div>
+      <p class="hint" style="margin:8px 0 0">Le paquet ZIP contient l'application (avec la configuration Firebase enregistrée), les fichiers Netlify et les règles Firestore.</p>
+      <details style="margin-top:12px">
+        <summary style="cursor:pointer;font-weight:600;color:var(--vert-fonce)">Étapes Firebase et règles de sécurité</summary>
+        <ol class="hint" style="margin:8px 0 0 18px;line-height:1.6">
+          <li>Console Firebase : créer un projet, puis ajouter une application Web.</li>
+          <li>Authentication : activer le fournisseur « Anonyme ».</li>
+          <li>Cloud Firestore : créer la base, puis coller les règles ci-dessous dans l'onglet Règles.</li>
+          <li>Copier l'objet firebaseConfig dans la zone ci-dessus.</li>
+        </ol>
+        <pre class="sync-regles">rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /etatnotes/{document} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}</pre>
+      </details>
+    </div>
+
     <div class="row-btns">
       <button class="btn" id="btn-save-params">💾 Enregistrer les paramètres</button>
       <button class="btn ghost" id="btn-reset-params">Réinitialiser</button>
@@ -914,7 +963,7 @@ function loadData(){
   }
 }
 function saveData(){
-  try{ localStorage.setItem(STORE_KEY, JSON.stringify(DATA)); }
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify(DATA)); envoyerSync(); }
   catch(e){ toast('Erreur de sauvegarde locale'); }
 }
 
@@ -961,7 +1010,7 @@ function loadUsers(){
   }catch(e){ return []; }
 }
 function saveUsers(){
-  try{ localStorage.setItem(USERS_KEY, JSON.stringify(USERS)); }
+  try{ localStorage.setItem(USERS_KEY, JSON.stringify(USERS)); envoyerSync(); }
   catch(e){ toast('Erreur de sauvegarde des utilisateurs'); }
 }
 
@@ -3042,7 +3091,7 @@ $('file-restaurer').addEventListener('change', async e=>{
         localStorage.setItem(STORE_KEY, JSON.stringify(sv.donnees));
         localStorage.setItem(USERS_KEY, JSON.stringify(sv.utilisateurs));
       }catch(err){ toast('Restauration impossible'); return; }
-      location.reload();
+      Promise.race([envoyerMaintenant(), new Promise(r=>setTimeout(r, 3000))]).finally(()=>location.reload());
     });
 });
 
@@ -3363,6 +3412,318 @@ setInterval(()=>{
   }
 }, 60000);
 
+/* =====================================================
+   SYNCHRONISATION EN LIGNE (Firebase) ET PAQUET DE DÉPLOIEMENT
+   ===================================================== */
+// Configuration Firebase intégrée lors du téléchargement du paquet (laisser cette ligne telle quelle)
+const FIREBASE_CONFIG_INTEGREE = /*FIREBASE_CONFIG_INJECT*/null;
+const FB_URL = 'https://www.gstatic.com/firebasejs/10.12.2/';
+const FB_CONFIG_KEY = 'notascol_firebase_config';
+const NETLIFY_KEY = 'notascol_netlify_info';
+const APPAREIL_KEY = 'notascol_appareil';
+const FB_COLLECTION = 'etatnotes';
+const FB_DOC = 'donnees_ecole';
+const FB_TAILLE_MAX = 900000;
+const JSZIP_URL = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+
+var syncRef = null, syncFs = null, syncEnvoiTimer = null, syncDernierEnvoi = '', syncEtat = 'off';
+var syncAppareilId = '';
+try{
+  syncAppareilId = localStorage.getItem(APPAREIL_KEY) || ('a' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8));
+  localStorage.setItem(APPAREIL_KEY, syncAppareilId);
+}catch(e){}
+
+function heureSync(){ return new Date().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'}); }
+
+function lireConfigFirebase(){
+  try{
+    const brute = localStorage.getItem(FB_CONFIG_KEY);
+    if(brute){ const c = JSON.parse(brute); if(c && c.apiKey && c.projectId) return c; }
+  }catch(e){}
+  if(FIREBASE_CONFIG_INTEGREE && FIREBASE_CONFIG_INTEGREE.apiKey && FIREBASE_CONFIG_INTEGREE.projectId) return FIREBASE_CONFIG_INTEGREE;
+  return null;
+}
+
+// Accepte l'objet copié depuis la console Firebase (JavaScript) ou du JSON
+function analyserConfigFirebase(texte){
+  let t = String(texte || '').trim();
+  t = t.replace(/^(const|let|var)\s+\w+\s*=\s*/, '').replace(/;\s*$/, '').trim();
+  // Accepte aussi les lignes seules (sans « const firebaseConfig = { » ni « } »)
+  if(!t.startsWith('{')) t = '{' + t;
+  if(!t.endsWith('}')) t = t + '}';
+  t = t.replace(/'/g, '"');
+  t = t.replace(/([{,]\s*)([A-Za-z_$][\w$]*)\s*:/g, '$1"$2":');
+  t = t.replace(/,\s*([}\]])/g, '$1');
+  const c = JSON.parse(t);
+  if(!c || !c.apiKey || !c.projectId) throw new Error('champs manquants');
+  return c;
+}
+
+function messageFirebase(e){
+  const c = String((e && (e.code || e.message)) || 'erreur inconnue');
+  if(/operation-not-allowed/.test(c)) return 'activez l\'authentification anonyme dans Firebase';
+  if(/permission-denied/.test(c)) return 'accès refusé, vérifiez les règles Firestore';
+  if(/invalid-api-key|api-key-not-valid/.test(c)) return 'clé API Firebase invalide';
+  if(/network|unavailable|offline/i.test(c)) return 'connexion Internet indisponible';
+  return c.slice(0, 120);
+}
+
+function majEtatSync(etat, detail){
+  syncEtat = etat;
+  const el = $('sync-etat');
+  if(!el) return;
+  const libelles = {off:'non configurée', ok:'connectée', erreur:'erreur', attente:'connexion…', envoi:'envoi en cours…'};
+  el.textContent = 'Synchronisation : ' + (libelles[etat] || etat) + (detail ? ' — ' + detail : '');
+  el.className = 'sync-etat sync-' + etat;
+}
+
+function majInfosSync(){
+  const box = $('sync-infos');
+  if(!box) return;
+  const cfg = lireConfigFirebase();
+  let nl = {};
+  try{ nl = JSON.parse(localStorage.getItem(NETLIFY_KEY) || '{}') || {}; }catch(e){}
+  const ligne = (k, v) => '<div class="sync-ligne"><span>' + escapeHtml(k) + '</span><strong>' + escapeHtml(v || '—') + '</strong></div>';
+  box.innerHTML = [
+    '<h3 class="sync-titre">Firebase</h3>',
+    ligne('Projet', cfg ? cfg.projectId : ''),
+    ligne('Domaine d\'authentification', cfg ? cfg.authDomain : ''),
+    ligne('Base de données', cfg ? 'Cloud Firestore, ' + FB_COLLECTION + ' / ' + FB_DOC : ''),
+    '<h3 class="sync-titre">Netlify et GitHub</h3>',
+    ligne('Site Netlify', nl.nom),
+    ligne('Adresse du site', nl.url),
+    ligne('Dépôt GitHub', nl.depot)
+  ].join('');
+}
+
+async function demarrerSync(){
+  const cfg = lireConfigFirebase();
+  if(!cfg){ majEtatSync('off'); majInfosSync(); return; }
+  majEtatSync('attente', 'connexion à Firebase');
+  try{
+    const [appMod, fsMod, authMod] = await Promise.all([
+      import(FB_URL + 'firebase-app.js'),
+      import(FB_URL + 'firebase-firestore.js'),
+      import(FB_URL + 'firebase-auth.js')
+    ]);
+    const app = appMod.initializeApp(cfg, 'etatnotes');
+    const auth = authMod.getAuth(app);
+    await authMod.signInAnonymously(auth);
+    const db = fsMod.getFirestore(app);
+    syncFs = fsMod;
+    syncRef = fsMod.doc(db, FB_COLLECTION, FB_DOC);
+    fsMod.onSnapshot(syncRef, appliquerSnapshot, err => majEtatSync('erreur', messageFirebase(err)));
+    majInfosSync();
+  }catch(e){
+    console.warn('Synchronisation', e);
+    majEtatSync('erreur', messageFirebase(e));
+  }
+}
+
+// Reçoit la version du serveur : seules les données confirmées par le serveur sont appliquées
+function appliquerSnapshot(snap){
+  if(snap.metadata.fromCache || snap.metadata.hasPendingWrites) return;
+  if(!snap.exists()){ envoyerSync(true); return; }
+  const d = snap.data();
+  if(typeof d.donnees !== 'string') return;
+  const distantU = typeof d.utilisateurs === 'string' ? d.utilisateurs : '[]';
+  if(d.appareil === syncAppareilId){ majEtatSync('ok', 'synchronisé à ' + heureSync()); return; }
+  const localD = localStorage.getItem(STORE_KEY) || '{}';
+  const localU = localStorage.getItem(USERS_KEY) || '[]';
+  if(d.donnees === localD && distantU === localU){ majEtatSync('ok', 'synchronisé à ' + heureSync()); return; }
+  try{
+    localStorage.setItem(STORE_KEY, d.donnees);
+    localStorage.setItem(USERS_KEY, distantU);
+  }catch(e){ majEtatSync('erreur', 'espace local insuffisant'); return; }
+  majEtatSync('ok', 'données reçues');
+  toast('Données mises à jour depuis un autre appareil');
+  setTimeout(()=>location.reload(), 1500);
+}
+
+function envoyerSync(immediat){
+  if(!syncRef) return;
+  clearTimeout(syncEnvoiTimer);
+  syncEnvoiTimer = setTimeout(envoyerMaintenant, immediat ? 0 : 800);
+}
+
+async function envoyerMaintenant(){
+  if(!syncRef || !syncFs) return;
+  const donnees = localStorage.getItem(STORE_KEY) || '{}';
+  const utilisateurs = localStorage.getItem(USERS_KEY) || '[]';
+  const cle = donnees + '\u0001' + utilisateurs;
+  if(cle === syncDernierEnvoi) return;
+  if(donnees.length + utilisateurs.length > FB_TAILLE_MAX){
+    majEtatSync('erreur', 'données trop volumineuses : réduisez la taille des logos');
+    return;
+  }
+  majEtatSync('envoi', 'envoi en cours');
+  try{
+    await syncFs.setDoc(syncRef, {donnees, utilisateurs, appareil: syncAppareilId, maj: new Date().toISOString()});
+    syncDernierEnvoi = cle;
+    majEtatSync('ok', 'envoyé à ' + heureSync());
+  }catch(e){
+    majEtatSync('erreur', messageFirebase(e));
+  }
+}
+
+function remplirCarteSync(){
+  let nl = {};
+  try{ nl = JSON.parse(localStorage.getItem(NETLIFY_KEY) || '{}') || {}; }catch(e){}
+  $('nl-nom').value = nl.nom || '';
+  $('nl-url').value = nl.url || '';
+  $('nl-depot').value = nl.depot || '';
+  majInfosSync();
+  if(!lireConfigFirebase()) majEtatSync('off');
+}
+
+$('btn-fb-enregistrer').addEventListener('click', ()=>{
+  let cfg = null;
+  try{ cfg = analyserConfigFirebase($('fb-config').value); }
+  catch(e){ dialogueErreur('Configuration illisible. Copiez l\'objet firebaseConfig de la console Firebase (il doit contenir apiKey et projectId).'); return; }
+  try{ localStorage.setItem(FB_CONFIG_KEY, JSON.stringify(cfg)); }
+  catch(e){ dialogueErreur('Enregistrement impossible sur cet appareil.'); return; }
+  toast('Configuration Firebase enregistrée');
+  setTimeout(()=>location.reload(), 800);
+});
+
+$('btn-fb-effacer').addEventListener('click', ()=>{
+  confirmAction('Effacer la configuration Firebase',
+    'La synchronisation sera arrêtée sur cet appareil. Les données locales sont conservées.',
+    ()=>{ localStorage.removeItem(FB_CONFIG_KEY); location.reload(); });
+});
+
+$('btn-sync-maintenant').addEventListener('click', ()=>{
+  if(!syncRef){ dialogueErreur('La synchronisation n\'est pas active sur cet appareil. Enregistrez d\'abord la configuration Firebase.'); return; }
+  syncDernierEnvoi = '';
+  envoyerSync(true);
+  toast('Synchronisation demandée');
+});
+
+$('btn-nl-enregistrer').addEventListener('click', ()=>{
+  const info = {nom: $('nl-nom').value.trim(), url: $('nl-url').value.trim(), depot: $('nl-depot').value.trim()};
+  if(info.url && !/^https?:\/\//.test(info.url)){ dialogueErreur('L\'adresse du site doit commencer par https://'); return; }
+  if(info.depot && !/^https?:\/\//.test(info.depot)){ dialogueErreur('L\'adresse du dépôt doit commencer par https://'); return; }
+  try{ localStorage.setItem(NETLIFY_KEY, JSON.stringify(info)); }
+  catch(e){ dialogueErreur('Enregistrement impossible sur cet appareil.'); return; }
+  majInfosSync();
+  toast('Informations Netlify enregistrées');
+});
+
+/* ---------- Paquet de déploiement (ZIP) ---------- */
+function chargerJSZip(){
+  if(window.JSZip) return Promise.resolve(window.JSZip);
+  return new Promise((res, rej)=>{
+    const s = document.createElement('script');
+    s.src = JSZIP_URL;
+    s.onload = ()=> window.JSZip ? res(window.JSZip) : rej(new Error('bibliothèque ZIP vide'));
+    s.onerror = ()=> rej(new Error('bibliothèque ZIP indisponible, vérifiez la connexion Internet'));
+    document.head.appendChild(s);
+  });
+}
+
+async function preparerPaquet(){
+  const JSZip = await chargerJSZip();
+  const rep = await fetch(location.href, {cache: 'no-store'});
+  if(!rep.ok) throw new Error('page de l\'application introuvable');
+  const cfg = lireConfigFirebase();
+  const source = (await rep.text()).replace(
+    /const FIREBASE_CONFIG_INTEGREE = (?:\/\*FIREBASE_CONFIG_INJECT\*\/)?(null|\{[^;]*\});/,
+    () => 'const FIREBASE_CONFIG_INTEGREE = ' + JSON.stringify(cfg) + ';'
+  );
+  const zip = new JSZip();
+  zip.file('index.html', source);
+  for(const [nom, contenu] of Object.entries(FICHIERS_DEPLOIEMENT)) zip.file(nom, contenu);
+  return zip.generateAsync({type: 'blob'});
+}
+
+$('btn-paquet').addEventListener('click', async ()=>{
+  toast('Préparation du paquet…');
+  try{
+    const blob = await preparerPaquet();
+    downloadBlob(blob, 'EtatNotes_Pro_v1_deploiement.zip');
+    toast('Paquet de déploiement téléchargé');
+  }catch(e){
+    console.warn(e);
+    dialogueErreur('Paquet impossible à préparer : ' + (e.message || e) + '. Ouvrez l\'application depuis son adresse Internet (et non en double-cliquant sur le fichier), puis réessayez.');
+  }
+});
+
+const FICHIERS_DEPLOIEMENT = {
+  'netlify.toml': `[build]
+  publish = "."
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+`,
+  'package.json': `{
+  "name": "etatnotes-pro",
+  "version": "1.0.0",
+  "description": "EtatNotes Pro v1 - gestion des notes scolaires",
+  "author": "ZONTE Omer",
+  "license": "UNLICENSED",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "dev": "npx netlify-cli dev",
+    "deploy": "npx netlify-cli deploy --prod"
+  }
+}
+`,
+  'netlify/functions/sante.mjs': `// Fonction Netlify : vérification de l'état du service
+export default async (req) => {
+  return Response.json({
+    application: "EtatNotes Pro v1",
+    statut: "ok",
+    date: new Date().toISOString()
+  });
+};
+
+export const config = {
+  path: "/api/sante"
+};
+`,
+  'firestore.rules': `rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /etatnotes/{document} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}
+`,
+  'README.md': `EtatNotes Pro v1 - paquet de déploiement
+
+Contenu :
+- index.html : l'application. La configuration Firebase est intégrée si elle était enregistrée dans l'administration.
+- netlify.toml, package.json, netlify/functions/sante.mjs : configuration Netlify.
+- firestore.rules : règles de sécurité à coller dans Firebase (Cloud Firestore > Règles).
+- .nojekyll et .gitignore : utiles pour GitHub Pages et Git.
+
+Mise en ligne :
+1. GitHub : créer un dépôt, puis y pousser ces fichiers (git add ., git commit, git push).
+2. Netlify : Add new site > Import an existing project, ou glisser le dossier sur app.netlify.com/drop.
+3. Firebase : activer l'authentification anonyme, créer Cloud Firestore et coller les règles de firestore.rules.
+
+Les données sont synchronisées dans Cloud Firestore, dans le document etatnotes / donnees_ecole.
+Ne placez jamais de mot de passe dans ces fichiers.
+`,
+  '.nojekyll': '',
+  '.gitignore': `.DS_Store
+Thumbs.db
+node_modules/
+*.log
+`
+};
+
 function init(){
   renderEvalSelects();
   majChampExtrait();
@@ -3374,6 +3735,8 @@ function init(){
 }
 init();
 bootAuth();
+remplirCarteSync();
+demarrerSync();
 
 </script>
 </body>
