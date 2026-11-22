@@ -1,0 +1,3380 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-title" content="EtatNotes Pro v1"/>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%2064%2064%22%20aria-hidden%3D%22true%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22egBg%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%2316a862%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23064d28%22/%3E%3C/linearGradient%3E%3ClinearGradient%20id%3D%22egCap%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%220%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ffc56b%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23f28c00%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2216%22%20fill%3D%22url%28%23egBg%29%22/%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2232%22%20r%3D%2226%22%20fill%3D%22none%22%20stroke%3D%22%23ffffff%22%20stroke-opacity%3D%22.12%22%20stroke-width%3D%221.5%22/%3E%3Cpath%20d%3D%22M32%2025%20C26%2022%2019%2022%2012%2024%20V45%20C19%2043%2026%2043%2032%2046%20Z%22%20fill%3D%22%23ffffff%22/%3E%3Cpath%20d%3D%22M32%2025%20C38%2022%2045%2022%2052%2024%20V45%20C45%2043%2038%2043%2032%2046%20Z%22%20fill%3D%22%23e6f6ed%22/%3E%3Cpath%20d%3D%22M32%2025%20V46%22%20stroke%3D%22%230a7a3d%22%20stroke-width%3D%221.2%22/%3E%3Cg%20stroke%3D%22%230a7a3d%22%20stroke-opacity%3D%22.55%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%20fill%3D%22none%22%3E%3Cpath%20d%3D%22M17%2030%20Q23%2029%2028%2031%22/%3E%3Cpath%20d%3D%22M17%2035%20Q23%2034%2028%2036%22/%3E%3Cpath%20d%3D%22M17%2040%20Q23%2039%2028%2041%22/%3E%3Cpath%20d%3D%22M36%2031%20Q41%2029%2047%2030%22/%3E%3Cpath%20d%3D%22M36%2036%20Q41%2034%2047%2035%22/%3E%3Cpath%20d%3D%22M36%2041%20Q41%2039%2047%2040%22/%3E%3C/g%3E%3Cpath%20d%3D%22M32%2011%20L51%2019%20L32%2027%20L13%2019%20Z%22%20fill%3D%22url%28%23egCap%29%22/%3E%3Cpath%20d%3D%22M22%2024%20V30%20Q32%2035%2042%2030%20V24%20L32%2028%20Z%22%20fill%3D%22%23c25f00%22/%3E%3Cpath%20d%3D%22M48%2020%20V31%22%20stroke%3D%22%23ffc56b%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22/%3E%3Ccircle%20cx%3D%2248%22%20cy%3D%2232.5%22%20r%3D%222.4%22%20fill%3D%22%23ffc56b%22/%3E%3C/svg%3E"/>
+<title>EtatNotes Pro v1 – Gestion des Notes</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<style>
+:root{
+  --vert:#0a7a3d; --vert-fonce:#065a2c; --orange:#f77f00; --blanc:#ffffff;
+  --gris:#f2f4f7; --gris-bord:#d9dee5; --texte:#1b2430; --rouge:#d62828; --bleu:#1d3557;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--gris);color:var(--texte);font-size:15px}
+body{padding-bottom:80px}
+header.appbar{
+  position:sticky;top:0;z-index:50;
+  background:linear-gradient(135deg,var(--vert),var(--vert-fonce));
+  color:#fff;padding:12px 16px;display:flex;flex-wrap:wrap;align-items:center;gap:12px;
+  box-shadow:0 2px 10px rgba(0,0,0,.15);
+}
+header.appbar .logo{
+  width:38px;height:38px;border-radius:9px;background:#fff;color:var(--vert);
+  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;
+}
+header.appbar h1{font-size:18px;margin:0;font-weight:700;letter-spacing:.3px}
+header.appbar .ecole-hdr{
+  display:inline-block;vertical-align:middle;
+  background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.55);border-radius:999px;
+  padding:5px 14px;box-shadow:inset 0 1px 0 rgba(255,255,255,.22);
+  font-size:12px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:300px;
+}
+header.appbar .ecole-hdr::before{
+  content:"";display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:8px;vertical-align:middle;
+  background:#ffc56b;box-shadow:0 0 0 2px rgba(255,197,107,.35);
+}
+header.appbar .ecole-hdr:empty{display:none}
+header.appbar .logo svg,.login-logo svg{display:block;width:100%;height:100%}
+.hdr-titre{flex:0 0 auto;min-width:0}
+.hdr-centre .ecole-hdr{margin-left:16px}
+.hdr-centre{flex:1 1 auto;min-width:0;display:flex;align-items:center;justify-content:center;gap:28px}
+.hdr-horloge{text-align:center;line-height:1.25;font-variant-numeric:tabular-nums;white-space:nowrap}
+.hdr-horloge #hdr-heure{font-size:16px;font-weight:800;letter-spacing:.5px}
+.hdr-horloge #hdr-date{font-size:11px;opacity:.92;text-transform:capitalize}
+@media(max-width:520px){
+  .hdr-horloge #hdr-heure{font-size:13px}.hdr-horloge #hdr-date{font-size:9px}
+  .hdr-centre{gap:12px}
+  .hdr-centre .ecole-hdr{margin-left:0}
+  header.appbar .ecole-hdr{font-size:9.5px;padding:3px 9px;max-width:150px;letter-spacing:.2px}
+  header.appbar .ecole-hdr::before{width:5px;height:5px;margin-right:5px}
+}
+header.appbar .sub{font-size:11px;opacity:.85;margin-top:1px}
+main{padding:8px;max-width:1000px;margin:0 auto}
+
+nav.tabbar{
+  position:fixed;bottom:0;left:0;right:0;z-index:60;
+  background:linear-gradient(90deg,#d9f0e3 0%,#eef8f2 45%,#fdebd3 100%);border-top:1px solid var(--gris-bord);
+  display:flex;justify-content:space-around;padding:6px 4px 10px;
+  box-shadow:0 -2px 12px rgba(0,0,0,.06);
+}
+nav.tabbar button{
+  background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:2px;
+  font-size:11px;color:#7a8797;padding:6px 10px;border-radius:10px;font-weight:600;
+}
+nav.tabbar button.nav-action{color:var(--bleu)}
+.eval-card{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--gris-bord);border-radius:12px;background:#fbfcfd;margin-bottom:10px}
+.eval-num{width:38px;height:38px;border-radius:50%;background:var(--vert);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;flex:none}
+.eval-corps{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
+.eval-corps input{width:100%}
+.eval-actions{display:flex;gap:6px;flex:none;flex-wrap:wrap}
+.pdf-preview table.t-tab,.pdf-preview table.t-recap{font-size:10pt}
+.pdf-preview td.c-age{background:#fde68a !important}
+.pdf-preview td.c-age-sup{background:#fdba74 !important}
+.pdf-preview td.c-classe{background:#bbf7d0 !important}
+.pdf-preview td.c-classe-red{background:#fecaca !important}
+.pdf-preview td.c-total{background:#bfdbfe !important}
+.pdf-preview td.c-age,.pdf-preview td.c-age-sup,.pdf-preview td.c-classe,.pdf-preview td.c-classe-red,.pdf-preview td.c-total{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.pdf-preview table.t-recap th,.pdf-preview table.t-recap td{padding:1px 2px}
+.pdf-preview table.t-recap{font-size:9pt}
+.pdf-preview table.t-recap tr.ligne-total td{font-weight:700;background:#f1f5f9 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.pdf-preview table.t-recap tr.ligne-total td.lab{text-align:left}
+.pdf-preview table.t-resume{font-size:10pt}
+.pdf-preview table.t-resume td.lab{font-weight:700;text-align:left}
+.pdf-preview table.t-resume td.sub{text-align:left;font-size:9pt}
+.pdf-preview table.t-resume td.tot{font-weight:700;font-size:12pt}
+.pdf-preview .duo{display:flex;gap:10px;align-items:flex-start;margin-top:10px}
+.pdf-preview .duo .gauche{width:42%}
+.pdf-preview .duo .droite{width:58%}
+.pdf-preview .bloc-chants{text-align:center;margin-top:12px;font-size:11pt}
+.pdf-preview .bloc-chants .ch-titre{font-weight:700;text-decoration:underline;margin-bottom:4px}
+.pdf-preview .total-tab{text-align:center;font-weight:700;margin-top:10px;font-size:11pt}
+.pdf-preview .sous-titre{text-align:center;font-weight:700;margin:8px 0 6px;font-size:10pt}
+.pdf-preview .legende{font-size:8.5pt;margin:4px 0 6px;text-align:center}
+.pdf-preview .signatures{display:flex;justify-content:space-between;margin-top:18px;text-align:center;font-size:10pt;gap:4px}
+.pdf-preview .signatures > div{width:32%;border:1px solid #000;padding:4px;min-height:90px;display:flex;flex-direction:column;justify-content:space-between}
+.pdf-preview .sig-titre{font-weight:700;text-decoration:underline}
+.pdf-preview .sig-nom{font-size:9pt;margin-top:auto}
+#alerte-fond{position:fixed;inset:0;background:rgba(15,23,42,.45);display:flex;align-items:center;justify-content:center;z-index:100000;padding:16px}
+#alerte-fond[hidden]{display:none}
+.alerte-boite{background:#fff;border-radius:14px;padding:22px 20px 18px;max-width:400px;width:100%;box-shadow:0 12px 32px rgba(0,0,0,.28);text-align:center;border-top:6px solid var(--rouge)}
+.alerte-icone{font-size:34px;line-height:1}
+.alerte-boite h3{margin:8px 0 6px;color:var(--rouge)}
+.alerte-boite p{margin:0 0 16px;font-size:15px;line-height:1.45;color:var(--texte)}
+.rep-table td.ctr{width:56px}
+.rep-table td.nom{text-align:left}
+.rep-table .rep-bar{width:90px;text-align:center}
+.rep-aff select{width:100%;min-width:120px;font-size:13px}
+.rep-aff td.nom{text-align:left}
+nav.tabbar button.active{color:var(--vert-fonce);background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.1)}
+nav.tabbar button .ico{font-size:19px;line-height:1}
+@media(max-width:520px){nav.tabbar button{flex:1;min-width:0;padding:5px 2px;font-size:9.5px;white-space:normal;text-align:center;line-height:1.15}nav.tabbar button .ico{font-size:16px}}
+
+.card{background:#fff;border-radius:12px;padding:12px;box-shadow:0 1px 4px rgba(16,24,40,.06);border:1px solid var(--gris-bord);margin-bottom:10px}
+.card h2{font-size:15px;margin:0 0 12px;color:var(--vert-fonce);display:flex;align-items:center;gap:8px}
+.card h2 .ico{font-size:18px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+@media(max-width:520px){.grid3{grid-template-columns:1fr 1fr}.grid2{grid-template-columns:1fr}}
+
+label.fld{display:block;font-size:12px;font-weight:600;color:#5b6878;margin-bottom:4px}
+input,select,textarea{
+  width:100%;padding:10px 12px;border:1px solid var(--gris-bord);border-radius:9px;
+  background:#fbfcfd;font-size:14px;color:var(--texte);outline:none;
+}
+input:focus,select:focus,textarea:focus{border-color:var(--vert);background:#fff;box-shadow:0 0 0 3px rgba(10,122,61,.12)}
+textarea{resize:vertical;min-height:60px}
+input:disabled,input[readonly]{background:#eceff3;color:#6b7686;cursor:not-allowed;border-color:#d9dee5}
+.searchbar{margin-bottom:10px}
+.table-eleves tbody tr{cursor:pointer}
+table.notes tr.sel td{background:#d4eedd !important}
+#edit-banner{display:none;background:#e7f4ed;border:1px solid #a9d9bb;color:var(--vert-fonce);border-radius:9px;padding:8px 10px;font-size:12px;font-weight:600;margin-bottom:10px}
+table.notes input.abs-chk{width:20px;height:20px;padding:0;min-width:0;accent-color:var(--rouge)}
+
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:11px 18px;border-radius:10px;border:none;font-size:14px;font-weight:700;
+  background:var(--vert);color:#fff;cursor:pointer;
+}
+.btn.orange{background:var(--orange)}
+.btn.bleu{background:var(--bleu)}
+.btn.rouge{background:var(--rouge)}
+.btn.ghost{background:#fff;color:var(--vert);border:1.5px solid var(--vert)}
+.btn:active{transform:scale(.98)}
+.btn:disabled{opacity:.5}
+.row-btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+
+.logo-upload{
+  border:2px dashed var(--gris-bord);border-radius:12px;padding:14px;text-align:center;
+  background:#fafbfc;cursor:pointer;transition:.2s;
+}
+.logo-upload:hover{border-color:var(--vert);background:#f2faf6}
+.logo-upload .preview{max-height:80px;max-width:100%;border-radius:6px;object-fit:contain;}
+.logo-upload .ph{font-size:32px;color:#b9c3cf;line-height:1}
+.logo-upload .lib{font-size:11px;color:#8a95a3;margin-top:4px}
+
+.pdf-preview{
+  background:#fff;border:1px solid var(--gris-bord);border-radius:10px;padding:10px;
+  font-family:"Times New Roman",Georgia,serif;color:#000;
+  max-width:800px;margin:0 auto;overflow-x:auto;
+}
+
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(10,20,30,.55);z-index:100;
+  display:none;align-items:center;justify-content:center;padding:16px;
+}
+.modal-overlay.show{display:flex}
+.modal{
+  background:#fff;border-radius:16px;padding:18px;max-width:520px;width:100%;
+  max-height:90vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.3);
+}
+.modal h3{margin:0 0 12px;font-size:16px;color:var(--vert-fonce)}
+
+#toast{
+  position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(30px);
+  background:#1b2430;color:#fff;padding:10px 18px;border-radius:10px;font-size:13px;
+  opacity:0;transition:.3s;z-index:200;pointer-events:none;max-width:90vw;text-align:center;
+}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.section{display:none}
+.section.active{display:block}
+.subsection{display:none}
+.subsection.active{display:block}
+
+.table-notes-wrap{overflow-x:auto;border:1px solid var(--gris-bord);border-radius:10px}
+table.notes{width:100%;border-collapse:collapse;font-size:12px}
+table.notes th,table.notes td{border:1px solid var(--gris-bord);padding:4px 3px;text-align:center}
+table.notes th{background:#eaf5ef;color:var(--vert-fonce);font-size:10px;text-transform:uppercase}
+table.notes input{padding:4px 2px;font-size:12px;text-align:center;border-radius:6px}
+table.notes input[type=number]{-moz-appearance:textfield;appearance:textfield}
+table.notes input[type=number]::-webkit-outer-spin-button,table.notes input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+table.notes td.nom{text-align:left;font-weight:600}
+table.notes tr:nth-child(even) td{background:#fafcfb}
+
+table.saisie th small{display:block;font-weight:600;text-transform:none;color:#5b6878;font-size:9px}
+table.saisie th:first-child,table.saisie td.nom{position:sticky;left:0;z-index:1;min-width:92px;max-width:140px;background:#fff}
+table.saisie th:first-child{z-index:2;background:#eaf5ef}
+table.saisie input{min-width:34px;width:100%}
+table.saisie td.calc{font-weight:700;white-space:nowrap}
+
+.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700}
+.badge.ok{background:#e2f6e9;color:var(--vert-fonce)}
+.badge.ko{background:#fde2e2;color:var(--rouge)}
+.badge.neu{background:#e8ecf1;color:#5b6878}
+
+.hint{font-size:11px;color:#8a95a3;margin-top:4px;line-height:1.4}
+
+.feuille-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.feuille-tabs button{
+  padding:8px 12px;border-radius:9px;border:1px solid var(--gris-bord);
+  background:#fff;font-size:12px;font-weight:700;color:#5b6878;
+}
+.feuille-tabs button.active{background:var(--vert);color:#fff;border-color:var(--vert)}
+
+.mat-row{display:flex;gap:6px;align-items:center;margin-bottom:8px}
+.mat-row .mat-nom{flex:1;min-width:0}
+.mat-row .slash{font-weight:700;color:#5b6878}
+.mat-row .mat-bar{width:78px;flex:none}
+.mat-row .btn{padding:8px 11px;flex:none}
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:8px 0}
+.chk{display:flex;align-items:center;gap:8px;padding:7px 9px;border:1px solid var(--gris-bord);border-radius:8px;background:#fbfcfd;font-size:13px;cursor:pointer}
+.chk input{width:18px;height:18px;padding:0;margin:0;accent-color:var(--vert);flex:none}
+@media(max-width:420px){.checks{grid-template-columns:1fr}}
+.sep{border:none;border-top:1px solid var(--gris-bord);margin:14px 0}
+.user-row{display:flex;align-items:center;gap:6px;padding:8px 0;border-bottom:1px solid var(--gris-bord)}
+.user-row .u-info{flex:1;min-width:0;word-break:break-word}
+.user-row .btn{padding:7px 10px;flex:none}
+
+@media(max-width:520px){
+  main{padding:6px}
+  .card{padding:10px}
+  .pdf-preview{padding:6px}
+  table.notes{font-size:10.5px}
+  table.notes th{font-size:8px}
+  table.notes th,table.notes td{padding:3px 1px}
+  table.notes input{font-size:10.5px;padding:3px 0}
+  table.saisie th:first-child,table.saisie td.nom{min-width:64px;max-width:84px;font-size:10px}
+  table.saisie input{min-width:26px}
+  table.saisie th small{font-size:7.5px}
+  table.notes input.abs-chk{width:16px;height:16px}
+}
+
+.full{grid-column:1/-1}
+.rep-class-row{display:flex;gap:8px;align-items:center;margin-bottom:6px}
+.rep-class-row span{flex:0 0 40%;font-weight:600;font-size:13px;word-break:break-word}
+
+.hdr-defil{flex:0 0 100%;width:100%;display:block;margin:-4px 0 -2px;overflow:hidden;white-space:nowrap;text-align:center;font-size:12.5px;font-weight:600;letter-spacing:.3px;opacity:.97;border-top:1px solid rgba(255,255,255,.2);padding-top:6px}
+.hdr-defil-piste{display:inline-block;padding-left:100%;animation:hdr-defil-anim 22s linear infinite}
+@keyframes hdr-defil-anim{0%{transform:translate(0,0)}100%{transform:translate(-100%,0)}}
+@media(max-width:520px){.hdr-defil{font-size:10.5px}}
+.login-pied{margin-top:16px;padding-top:12px;border-top:1px solid var(--gris-bord);text-align:center;font-size:12px;color:#5b6878;line-height:1.55}
+.login-pied p{margin:0}
+.login-pied .login-droits{margin-top:6px;font-size:11px}
+.hdr-user{margin-left:0;display:flex;align-items:center;gap:8px;font-size:12px;text-align:right}
+.hdr-btn{background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.55);border-radius:8px;padding:6px 10px;font-size:12px;font-weight:700;cursor:pointer}
+@media(max-width:480px){header.appbar .sub{display:none}#user-badge{max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}}
+
+#login-screen{display:none;position:fixed;inset:0;z-index:500;overflow:auto;background:linear-gradient(135deg,var(--vert),var(--vert-fonce));align-items:center;justify-content:center;padding:16px}
+.login-box{background:#fff;border-radius:16px;padding:24px;width:100%;max-width:370px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.login-logo{width:56px;height:56px;border-radius:14px;background:var(--vert);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:26px;margin:0 auto 10px}
+.login-box h1{text-align:center;font-size:22px;margin:0 0 4px;color:var(--vert-fonce)}
+.login-box .login-sub{text-align:center;font-size:13px;color:#5b6878;margin:0 0 16px}
+#login-err{color:var(--rouge);font-size:13px;font-weight:600;min-height:18px;margin:8px 0}
+</style>
+
+<style id="feuille-css">
+.pdf-preview .entete{
+  display:flex;justify-content:space-between;align-items:flex-start;gap:10px;
+  border-bottom:2px solid #000;padding-bottom:8px;margin-bottom:10px;
+}
+.pdf-preview .entete .col{flex:1;font-size:8pt;line-height:1.4;text-align:center}
+.pdf-preview .entete .centre{flex:1.3;font-size:8pt;line-height:1.4;text-align:center;padding-top:6px}
+.pdf-preview .encadre-eval{display:inline-block;border:1.5px solid #000;padding:6px 12px;margin:4px 6px 0 0;box-shadow:-4px -4px 0 #8a8a8a;white-space:nowrap;text-align:left}
+.pdf-preview .encadre-eval .compo{white-space:nowrap}
+.pdf-preview .encadre-eval .classe-eval{text-align:center;font-weight:700;font-size:10pt;margin-bottom:2px}
+.pdf-preview .entete .centre.centre-bas{align-self:flex-end}
+.pdf-preview .entete .rep{font-weight:700;text-transform:uppercase}
+.pdf-preview .entete .ecole{font-weight:700;text-transform:uppercase}
+.pdf-preview .logo-entete{display:block;margin:4px auto;max-height:54px;max-width:84px;object-fit:contain}
+.pdf-preview .devise{font-style:italic;font-size:8pt;font-weight:700;letter-spacing:.4px}
+.pdf-preview .entete .compo{font-weight:700;text-transform:uppercase;margin-top:3px}
+.pdf-preview table.stats{margin:2px 0 8px}
+.pdf-preview .titre-feuille{
+  text-align:center;font-weight:800;font-size:13px;text-transform:uppercase;
+  margin:10px 0 6px;text-decoration:underline;
+}
+.pdf-preview .sous-feuille{text-align:center;font-size:10px;margin-bottom:10px}
+.pdf-preview table{width:100%;border-collapse:collapse;font-size:11pt;margin-top:6px}
+.pdf-preview table.t-feuille{font-size:10pt}
+.pdf-preview table th,.pdf-preview table td{border:1px solid #000;padding:2px;text-align:center}
+.pdf-preview table th{background:#e8e8e8;font-weight:700;font-size:88%}
+.pdf-preview table thead{display:table-header-group}
+.pdf-preview table tr{page-break-inside:avoid}
+.pdf-preview table td.nm{text-align:left}
+.pdf-preview table td.nom-fille{color:#dc2626;font-weight:700}
+.pdf-preview table td.nom-fille-noir{color:#000;font-weight:700}
+.pdf-preview .titre-bordeau{background:#7b1d2e;color:#fff;font-weight:800;text-decoration:none;padding:5px 8px;margin:10px 0 8px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.pdf-preview .signatures{display:flex;justify-content:space-between;margin-top:24px;font-size:9.5px}
+.pdf-preview .signatures > div{text-align:center;width:42%}
+.pdf-preview .signatures .nom-sign{font-weight:700;margin-top:3px}
+.pdf-preview .signatures .ligne{border-top:1px solid #000;margin-top:26px;padding-top:3px}
+/* Ligne discontinue de 3 cm séparant Ministère, Direction, Inspection et École */
+.pdf-preview .ligne-discontinue{
+  width:3cm;
+  border:0;
+  border-top:1px dashed #000;
+  margin:4px auto 0 auto;
+}
+@media screen and (max-width:520px){
+.pdf-preview table th,.pdf-preview table td{padding:1px}
+}
+</style>
+</head>
+<body>
+
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo"><svg viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="egBg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#16a862"/><stop offset="1" stop-color="#064d28"/></linearGradient><linearGradient id="egCap" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ffc56b"/><stop offset="1" stop-color="#f28c00"/></linearGradient></defs><rect width="64" height="64" rx="16" fill="url(#egBg)"/><circle cx="32" cy="32" r="26" fill="none" stroke="#ffffff" stroke-opacity=".12" stroke-width="1.5"/><path d="M32 25 C26 22 19 22 12 24 V45 C19 43 26 43 32 46 Z" fill="#ffffff"/><path d="M32 25 C38 22 45 22 52 24 V45 C45 43 38 43 32 46 Z" fill="#e6f6ed"/><path d="M32 25 V46" stroke="#0a7a3d" stroke-width="1.2"/><g stroke="#0a7a3d" stroke-opacity=".55" stroke-width="1.1" stroke-linecap="round" fill="none"><path d="M17 30 Q23 29 28 31"/><path d="M17 35 Q23 34 28 36"/><path d="M17 40 Q23 39 28 41"/><path d="M36 31 Q41 29 47 30"/><path d="M36 36 Q41 34 47 35"/><path d="M36 41 Q41 39 47 40"/></g><path d="M32 11 L51 19 L32 27 L13 19 Z" fill="url(#egCap)"/><path d="M22 24 V30 Q32 35 42 30 V24 L32 28 Z" fill="#c25f00"/><path d="M48 20 V31" stroke="#ffc56b" stroke-width="1.8" stroke-linecap="round"/><circle cx="48" cy="32.5" r="2.4" fill="#ffc56b"/></svg></div>
+    <h1>EtatNotes Pro v1</h1>
+    <p class="login-sub" id="login-sub">Connectez-vous pour accéder à l'application.</p>
+    <label class="fld">Identifiant</label>
+    <input id="login-user" autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false"/>
+    <label class="fld" style="margin-top:10px">Mot de passe</label>
+    <input type="password" id="login-pass" autocomplete="current-password"/>
+    <div id="login-confirm-wrap" style="display:none">
+      <label class="fld" style="margin-top:10px">Confirmer le mot de passe</label>
+      <input type="password" id="login-pass2" autocomplete="new-password"/>
+    </div>
+    <div id="login-err"></div>
+    <button class="btn" id="btn-login" style="width:100%">Se connecter</button>
+    <div class="login-pied">
+      <p>Concepteur et auteur : <strong>ZONTE Omer</strong></p>
+      <p>Infoline : 0757707557 – 0151677474</p>
+      <p>Email : zonte.om@gmail.com</p>
+      <p class="login-droits">© 2026 EtatNotes Pro v1. Tous droits réservés.</p>
+    </div>
+  </div>
+</div>
+
+<div id="app" style="display:none">
+
+<header class="appbar">
+  <div class="logo"><svg viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="egBg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#16a862"/><stop offset="1" stop-color="#064d28"/></linearGradient><linearGradient id="egCap" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ffc56b"/><stop offset="1" stop-color="#f28c00"/></linearGradient></defs><rect width="64" height="64" rx="16" fill="url(#egBg)"/><circle cx="32" cy="32" r="26" fill="none" stroke="#ffffff" stroke-opacity=".12" stroke-width="1.5"/><path d="M32 25 C26 22 19 22 12 24 V45 C19 43 26 43 32 46 Z" fill="#ffffff"/><path d="M32 25 C38 22 45 22 52 24 V45 C45 43 38 43 32 46 Z" fill="#e6f6ed"/><path d="M32 25 V46" stroke="#0a7a3d" stroke-width="1.2"/><g stroke="#0a7a3d" stroke-opacity=".55" stroke-width="1.1" stroke-linecap="round" fill="none"><path d="M17 30 Q23 29 28 31"/><path d="M17 35 Q23 34 28 36"/><path d="M17 40 Q23 39 28 41"/><path d="M36 31 Q41 29 47 30"/><path d="M36 36 Q41 34 47 35"/><path d="M36 41 Q41 39 47 40"/></g><path d="M32 11 L51 19 L32 27 L13 19 Z" fill="url(#egCap)"/><path d="M22 24 V30 Q32 35 42 30 V24 L32 28 Z" fill="#c25f00"/><path d="M48 20 V31" stroke="#ffc56b" stroke-width="1.8" stroke-linecap="round"/><circle cx="48" cy="32.5" r="2.4" fill="#ffc56b"/></svg></div>
+  <div class="hdr-titre">
+    <h1>EtatNotes Pro v1</h1>
+    <div class="sub">Gestion des notes scolaires</div>
+  </div>
+  <div class="hdr-centre">
+    <div class="hdr-horloge">
+      <div id="hdr-heure">--:--:--</div>
+      <div id="hdr-date"></div>
+    </div>
+    <div class="ecole-hdr" id="hdr-ecole"></div>
+  </div>
+  <div class="hdr-user">
+    <span id="user-badge"></span>
+    <button class="hdr-btn" id="btn-logout" title="Se déconnecter">⏻ Déconnexion</button>
+  </div>
+  <div class="hdr-defil" aria-label="Informations de l'application"><div class="hdr-defil-piste">Concepteur et auteur : ZONTE Omer &nbsp;•&nbsp; Infoline : 0757707557 – 0151677474 &nbsp;•&nbsp; Email : zonte.om@gmail.com &nbsp;•&nbsp;</div></div>
+</header>
+
+<main>
+
+  <!-- ================= SAISIE ================= -->
+  <section id="sec-saisie" class="section active">
+    <div class="card">
+      <h2><span class="ico">✍️</span> Saisie des notes</h2>
+      <div class="grid2">
+        <div>
+          <label class="fld">Classe</label>
+          <select id="saisie-classe"><option value="">-- Choisir --</option></select>
+        </div>
+        <div>
+          <label class="fld">Trimestre / Période</label>
+          <select id="saisie-periode">
+          </select>
+        </div>
+      </div>
+      <div class="row-btns">
+        <button class="btn" id="btn-charger-eleves">Charger les élèves</button>
+        <button class="btn rouge" id="btn-reset-notes">🧹 Réinitialiser notes</button>
+      </div>
+      <p class="hint">Les élèves sont définis dans l'onglet « Élèves ». Chaque matière est notée sur son total de points (réglé dans « Paramètres »). Cochez ABS pour un élève absent.</p>
+    </div>
+    <div class="card">
+      <h2><span class="ico">📋</span> Notes de la classe</h2>
+      <input type="search" id="search-notes" class="searchbar" placeholder="🔍 Rechercher un élève…" autocomplete="off"/>
+      <div id="zone-notes"><p class="hint">Sélectionnez une classe puis cliquez sur « Charger les élèves ».</p></div>
+      <div class="row-btns" style="margin-top:12px">
+        <button class="btn orange" id="btn-save-notes">💾 Enregistrer les notes</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= ELEVES ================= -->
+  <section id="sec-eleves" class="section">
+    <div class="card">
+      <h2><span class="ico">👨‍🎓</span> Ajouter un élève</h2>
+      <input type="search" id="search-eleves" class="searchbar" placeholder="🔍 Rechercher un élève…" autocomplete="off"/>
+      <div id="edit-banner"></div>
+      <div class="grid2">
+        <div>
+          <label class="fld">Nom</label>
+          <input id="el-nom" placeholder="NOM"/>
+        </div>
+        <div>
+          <label class="fld">Prénoms</label>
+          <input id="el-prenoms" placeholder="Prénoms"/>
+        </div>
+      </div>
+      <div class="grid2" style="margin-top:10px">
+        <div>
+          <label class="fld">Sexe</label>
+          <select id="el-sexe"><option>M</option><option>F</option></select>
+        </div>
+        <div>
+          <label class="fld">Matricule (optionnel)</label>
+          <input id="el-matricule" placeholder="Matricule"/>
+        </div>
+      </div>
+      <div class="grid2" style="margin-top:10px">
+        <div>
+          <label class="fld">Date de naissance</label>
+          <input type="date" id="el-naissance"/>
+        </div>
+        <div>
+          <label class="fld">Âge (calculé)</label>
+          <input type="text" id="el-age" value="" placeholder="—" disabled readonly tabindex="-1"/>
+        </div>
+      </div>
+      <div class="grid2" style="margin-top:10px">
+        <div>
+          <label class="fld">Scolarité en classe (années)</label>
+          <input type="number" id="el-scol-classe" min="0" step="1" inputmode="numeric" placeholder="0"/>
+        </div>
+        <div>
+          <label class="fld">Total scolarité (années)</label>
+          <input type="number" id="el-scol-total" min="0" step="1" inputmode="numeric" placeholder="0"/>
+        </div>
+      </div>
+      <div class="grid2" style="margin-top:10px">
+        <div>
+          <label class="fld" style="display:flex;align-items:center;gap:8px;cursor:pointer">
+            <input type="checkbox" id="el-extrait" style="width:18px;height:18px;margin:0;accent-color:var(--vert)"/>
+            Extrait (Oui/Non)
+          </label>
+        </div>
+        <div>
+          <label class="fld">N° de l'extrait</label>
+          <input id="el-num-extrait" placeholder="N° de l'extrait"/>
+        </div>
+      </div>
+      <p class="hint">Recherchez un élève ou ouvrez-le depuis « Liste élèves » : ses informations s'affichent, puis utilisez Modifier ou Supprimer.</p>
+      <div class="row-btns">
+        <button class="btn" id="btn-add-eleve">➕ Ajouter</button>
+        <button class="btn bleu" id="btn-modif-eleve">✏️ Modifier</button>
+        <button class="btn ghost" id="btn-annuler-eleve">Annuler</button>
+        <button class="btn rouge" id="btn-suppr-eleve">🗑️ Supprimer</button>
+      </div>
+    </div>
+    <div class="card">
+      <h2><span class="ico">📋</span> Tableau des élèves</h2>
+      <div class="table-notes-wrap">
+        <table class="notes table-eleves">
+          <thead><tr><th>#</th><th>Nom</th><th>Prénoms</th><th>Sexe</th><th>Matricule</th><th>Date de naissance</th><th>Scolarité en classe</th><th>Total scolarité</th><th>Extrait</th><th>N° extrait</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= TABLEAU ALPHABETIQUE ================= -->
+  <section id="sec-tableaux" class="section">
+    <div class="feuille-tabs" id="tab-sub">
+      <button class="active" data-sub="alpha">🔤 Alphabétique</button>
+      <button data-sub="recap">📑 Récapitulatif</button>
+      <button data-sub="stats">📊 Effectifs</button>
+    </div>
+  <section id="sec-alpha" class="subsection active">
+    <div class="card">
+      <h2><span class="ico">🔤</span> Tableau alphabétique</h2>
+      <p class="hint" style="margin:0 0 10px">Les élèves sont classés par ordre alphabétique. Les chants et les récitations ci-dessous apparaissent sous le tableau. Une ligne par titre.</p>
+      <div class="grid2">
+        <div><label class="fld">Chants</label><textarea id="ch-chants" rows="4" placeholder="Ah Madame&#10;L'école est bonne"></textarea></div>
+        <div><label class="fld">Récitations</label><textarea id="ch-recits" rows="4" placeholder="Mon école&#10;Jolie maman"></textarea></div>
+      </div>
+      <div class="row-btns" style="margin:10px 0 12px"><button class="btn" id="btn-save-chants">💾 Enregistrer chants et récitations</button></div>
+      <div class="row-btns" style="margin-bottom:12px">
+        <button class="btn orange" id="btn-imp-alpha">🖨️ Imprimer</button>
+      </div>
+      <div id="alpha-render" class="pdf-preview"></div>
+    </div>
+  </section>
+
+  <!-- ================= TABLEAU RECAPITULATIF ================= -->
+  <section id="sec-recap" class="subsection">
+    <div class="card">
+      <h2><span class="ico">📑</span> Tableau récapitulatif</h2>
+      <p class="hint" style="margin:0 0 10px">Les cases sont colorées selon l'âge, la scolarité en classe et la scolarité totale. Les noms des signataires viennent du profil (Inspecteur, Directeur, Maître).</p>
+      <div class="row-btns" style="margin-bottom:12px">
+        <button class="btn orange" id="btn-imp-recap">🖨️ Imprimer</button>
+      </div>
+      <div id="recap-render" class="pdf-preview"></div>
+    </div>
+  </section>
+
+
+  <!-- ================= STATISTIQUES ================= -->
+  <section id="sec-stats" class="subsection">
+    <div class="card">
+      <h2><span class="ico">📊</span> Statistiques des effectifs</h2>
+      <div class="table-notes-wrap">
+        <table class="notes" id="table-effectifs">
+          <thead><tr><th>Sexe</th><th>Effectif</th><th>Redoublants</th><th>Avec extrait</th><th>Sans extrait</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <h2><span class="ico">📄</span> Aperçu PDF des statistiques</h2>
+      <div class="row-btns" style="margin-bottom:12px">
+        <button class="btn orange" id="btn-imprimer-stats">🖨️ Imprimer</button>
+      </div>
+      <div id="stats-render" class="pdf-preview"></div>
+    </div>
+  </section>
+  </section>
+
+  <!-- ================= LISTE DES ELEVES ================= -->
+  <section id="sec-listes" class="section">
+    <div class="card">
+      <h2><span class="ico">📚</span> Liste des élèves</h2>
+      <div class="feuille-tabs" id="liste-tabs">
+        <button class="active" data-liste="generale">Liste générale</button>
+        <button data-liste="filles">Liste des filles</button>
+        <button data-liste="garcons">Liste des garçons</button>
+        <button data-liste="redoublants">Liste des redoublants</button>
+        <button data-liste="sans">Liste sans extrait</button>
+        <button data-liste="avec">Liste avec extrait</button>
+      </div>
+      <div class="row-btns" style="margin:0 0 12px">
+        <button class="btn bleu" id="btn-import-eleves">📥 Import Excel</button>
+        <button class="btn ghost" id="btn-export-eleves">📤 Export Excel</button>
+        <button class="btn rouge" id="btn-vider-eleves">Vider la base</button>
+        <input type="file" id="file-import-eleves" accept=".xlsx,.xls,.csv" style="display:none"/>
+      </div>
+      <p class="hint" style="margin:0 0 10px">Colonnes attendues : Nom, Prénoms, Sexe, Matricule, Date de naissance, Scolarité en classe, Total scolarité, Extrait, N° extrait.</p>
+      <div class="table-notes-wrap">
+        <table class="notes table-eleves">
+          <thead>
+            <tr><th>#</th><th>Nom</th><th>Prénoms</th><th>Sexe</th><th>Matricule</th><th>Date de naissance</th><th>Scolarité en classe</th><th>Total scolarité</th><th>Extrait</th><th>N° extrait</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <h2><span class="ico">📄</span> Aperçu PDF de la liste</h2>
+      <div class="row-btns" style="margin-bottom:12px">
+        <button class="btn orange" id="btn-imprimer-liste">🖨️ Imprimer</button>
+      </div>
+      <div id="liste-render" class="pdf-preview"></div>
+    </div>
+  </section>
+
+  <!-- ================= PROFIL ================= -->
+  <section id="sec-profil" class="section">
+    <div class="card">
+      <h2><span class="ico">🧑‍🏫</span> Mon profil</h2>
+      <!-- Admin uniquement : sélection d'un utilisateur -->
+      <div id="pf-admin-user-wrap" style="display:none;margin-bottom:12px">
+        <label class="fld">Sélectionner un utilisateur</label>
+        <select id="pf-admin-user-select"></select>
+      </div>
+      <p class="hint" style="margin:0 0 10px">Certaines informations sont définies par l'administrateur et ne sont pas modifiables. Les dates des évaluations se modifient dans l'onglet Évaluations.</p>
+      <div class="grid2" id="pf-verrou-grid"></div>
+      <div class="row-btns">
+        <button class="btn" id="btn-save-profil">💾 Enregistrer</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CREATION DE CLASSE (admin) ================= -->
+  <section id="sec-classes" class="section">
+    <div class="card">
+      <h2><span class="ico">🏫</span> Création de classe</h2>
+      <p class="hint" style="margin:0 0 10px">Créez les classes (CP1, CE1, CM2…). Chaque classe apparaît ensuite dans « Répartition des matières par classe » et dans les profils des enseignants.</p>
+      <div class="row-btns" style="margin:0 0 12px">
+        <input id="cl-nom" placeholder="Nom de la classe, ex. CP1" style="flex:1"/>
+        <button class="btn" id="btn-cl-add">➕ Créer la classe</button>
+      </div>
+      <div id="cl-liste"></div>
+    </div>
+  </section>
+
+  <!-- ================= EVALUATIONS ================= -->
+  <section id="sec-evaluations" class="section">
+    <div class="card">
+      <h2><span class="ico">🗓️</span> Évaluations</h2>
+      <p class="hint" id="eval-hint" style="margin:0 0 12px"></p>
+      <div id="eval-liste"></div>
+      <div class="row-btns" id="eval-btns" style="margin-top:6px">
+        <button class="btn" id="btn-ev-dates">💾 Enregistrer ces évaluations et dates</button>
+      </div>
+    </div>
+    <div class="card" id="eval-ajout">
+      <h2><span class="ico">➕</span> Ajouter une évaluation</h2>
+      <div class="row-btns">
+        <input id="ev-nom-new" placeholder="Nom, ex. EVACO 5" style="flex:1"/>
+        <button class="btn" id="btn-ev-add">➕ Ajouter</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= REPARTITIONS (admin) ================= -->
+  <section id="sec-repartitions" class="section">
+    <div class="card">
+      <h2><span class="ico">🗂️</span> Affectation des répartitions par classe</h2>
+      <p class="hint" style="margin:0 0 10px">Choisissez la répartition générale de chaque classe. Si une classe change selon l'évaluation (ex. CP1 : GRAPHISME seulement en EVA 1), choisissez la répartition propre à l'évaluation concernée. « Identique à la générale » signifie que la répartition générale est utilisée.</p>
+      <div id="rep-classes"></div>
+    </div>
+    <div class="card">
+      <h2><span class="ico">📚</span> Répartitions de matières</h2>
+      <label class="fld">Répartition à modifier</label>
+      <select id="rep-edit-select"></select>
+      <input id="rep-nom" placeholder="Nom de la répartition (ex. CP1 – EVA 1)" style="margin-top:8px"/>
+      <div class="row-btns" style="margin:10px 0">
+        <button class="btn ghost" id="btn-rep-tout">☑️ Tout cocher</button>
+        <button class="btn ghost" id="btn-rep-rien">☐ Tout décocher</button>
+      </div>
+      <div class="table-notes-wrap">
+        <table class="notes rep-table">
+          <thead><tr><th>Inclure</th><th>Matière</th><th>Total de points</th></tr></thead>
+          <tbody id="rep-checks"></tbody>
+        </table>
+      </div>
+      <div class="row-btns" style="margin-top:12px">
+        <button class="btn" id="btn-rep-save">💾 Enregistrer</button>
+        <button class="btn rouge" id="btn-rep-del">🗑️ Supprimer</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PARAMETRES (admin) ================= -->
+  <section id="sec-parametres" class="section">
+    <div class="card">
+      <h2><span class="ico">🇨🇮</span> Établissement (valeurs par défaut)</h2>
+      <p class="hint" style="margin:0 0 10px">Ces informations servent de valeurs par défaut. Les champs Direction régionale, École, Directeur, Année scolaire et Inspection sont définis par utilisateur dans « Profil complet d'un utilisateur ».</p>
+      <div class="grid2">
+        <div><label class="fld">République</label><input id="p-republique" value="République de Côte d'Ivoire"/></div>
+        <div><label class="fld">Devise</label><input id="p-devise" value="Union – Discipline – Travail"/></div>
+      </div>
+      <div class="grid2" style="margin-top:10px">
+        <div><label class="fld">Ministère</label><input id="p-ministere" placeholder="Ministère de l'Éducation Nationale"/></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class="ico">🖼️</span> Logos</h2>
+      <div class="grid2">
+        <div>
+          <label class="fld">Logo Côte d'Ivoire</label>
+          <div class="logo-upload" id="drop-logo-ci" onclick="document.getElementById('file-logo-ci').click()">
+            <div class="ph" id="ph-logo-ci">🇨🇮</div>
+            <img class="preview" id="prev-logo-ci" style="display:none"/>
+            <div class="lib">Cliquez pour choisir une image</div>
+          </div>
+          <input type="file" id="file-logo-ci" accept="image/*" style="display:none"/>
+        </div>
+        <div>
+          <label class="fld">Logo école (par défaut)</label>
+          <div class="logo-upload" id="drop-logo-ecole" onclick="document.getElementById('file-logo-ecole').click()">
+            <div class="ph" id="ph-logo-ecole">🏫</div>
+            <img class="preview" id="prev-logo-ecole" style="display:none"/>
+            <div class="lib">Cliquez pour choisir une image</div>
+          </div>
+          <input type="file" id="file-logo-ecole" accept="image/*" style="display:none"/>
+        </div>
+      </div>
+      <div class="row-btns" style="margin-top:10px">
+        <button class="btn ghost" id="btn-reset-logos">Retirer les logos</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class="ico">📚</span> Matières et total de points</h2>
+      <div id="liste-matieres"></div>
+      <div class="row-btns">
+        <button class="btn ghost" id="btn-add-matiere">➕ Ajouter une matière</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class="ico">👤</span> Utilisateurs de l'application</h2>
+      <div id="liste-users"></div>
+      <hr class="sep"/>
+      <label class="fld">Ajouter un utilisateur</label>
+      <div class="grid2">
+        <input id="nu-login" placeholder="Identifiant" autocomplete="off"/>
+        <input type="password" id="nu-pass" placeholder="Mot de passe (6 car. min.)" autocomplete="new-password"/>
+      </div>
+      <div class="grid2" style="margin-top:8px">
+        <select id="nu-role"><option value="user">Utilisateur</option><option value="admin">Administrateur</option></select>
+        <button class="btn" id="btn-add-user">➕ Ajouter</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class="ico">🧑‍🏫</span> Profil complet d'un utilisateur</h2>
+      <p class="hint">L'administrateur remplit les informations de l'utilisateur (Inspection, École, Classe, Directeur, Année, Logo école, Nom et prénoms). Les dates EVACO sont saisies par l'utilisateur lui-même dans son profil.</p>
+      <label class="fld">Choisir l'utilisateur</label>
+      <select id="admin-user-select"></select>
+      <div class="grid2" style="margin-top:10px">
+        <div><label class="fld">Inspection (IEP)</label><input id="ad-inspection"/></div>
+        <div><label class="fld">École</label><input id="ad-etablissement"/></div>
+        <div><label class="fld">Direction régionale</label><input id="ad-direction"/></div>
+        <div><label class="fld">Nom de l'Inspecteur</label><input id="ad-inspecteur"/></div>
+      </div>
+      <div class="grid2" style="margin-top:10px">
+        <div><label class="fld">Classe</label><select id="ad-classe"></select></div>
+        <div><label class="fld">Nom du Directeur</label><input id="ad-directeur"/></div>
+      </div>
+      <div class="grid2" style="margin-top:10px">
+        <div><label class="fld">Année scolaire</label><input id="ad-annee"/></div>
+        <div><label class="fld">Nom et prénoms du maître</label><input id="ad-nomMaitre"/></div>
+      </div>
+      <div style="margin-top:10px">
+        <label class="fld">Logo de l'école</label>
+        <div class="logo-upload" onclick="document.getElementById('file-logo-user').click()">
+          <div class="ph" id="ph-logo-user">🏫</div>
+          <img class="preview" id="prev-logo-user" style="display:none"/>
+          <div class="lib">Cliquez pour choisir une image</div>
+        </div>
+        <input type="file" id="file-logo-user" accept="image/*" style="display:none"/>
+      </div>
+      <div class="grid2" style="margin-top:10px">
+        <div><label class="fld">Date d'échéance programmée</label><input type="date" id="ad-echeance"/></div>
+        <div style="display:flex;align-items:flex-end"><button class="btn orange" id="btn-save-echeance">💾 Enregistrer la date</button></div>
+      </div>
+      <p class="hint" style="margin:6px 0 10px">⚠️ Si la date est antérieure à la date du jour, l'utilisateur ne pourra plus accéder à son compte.</p>
+      <div class="row-btns">
+        <button class="btn" id="btn-save-admin-profil">💾 Enregistrer le profil</button>
+      </div>
+    </div>
+
+    <div class="row-btns">
+      <button class="btn" id="btn-save-params">💾 Enregistrer les paramètres</button>
+      <button class="btn ghost" id="btn-reset-params">Réinitialiser</button>
+    </div>
+  </section>
+
+  <!-- ================= PDF ================= -->
+  <section id="sec-pdf" class="section">
+    <div class="card">
+      <h2><span class="ico">📄</span> Aperçu des feuilles de résultats</h2>
+      <div class="feuille-tabs" id="feuille-tabs">
+      </div>
+      <div class="row-btns" style="margin-bottom:12px">
+        <button class="btn orange" id="btn-imprimer">🖨️ Imprimer / PDF</button>
+      </div>
+      <div id="pdf-render" class="pdf-preview"></div>
+    </div>
+  </section>
+
+</main>
+
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <h3 id="modal-titre">Confirmation</h3>
+    <p id="modal-msg" style="font-size:14px;line-height:1.5"></p>
+    <div class="row-btns" style="justify-content:flex-end">
+      <button class="btn ghost" id="modal-cancel">Annuler</button>
+      <button class="btn rouge" id="modal-ok">Confirmer</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-edit">
+  <div class="modal">
+    <h3 id="eu-titre">Modifier l'utilisateur</h3>
+    <label class="fld">Identifiant</label>
+    <input id="eu-login" autocomplete="off"/>
+    <label class="fld" style="margin-top:10px">Nouveau mot de passe (laisser vide pour ne pas le changer)</label>
+    <input type="password" id="eu-pwd" placeholder="Nouveau mot de passe (6 car. min.)" autocomplete="new-password"/>
+    <input type="password" id="eu-pwd2" placeholder="Confirmer" autocomplete="new-password" style="margin-top:8px"/>
+    <div class="row-btns" style="justify-content:flex-end;margin-top:14px">
+      <button class="btn ghost" id="eu-cancel">Annuler</button>
+      <button class="btn" id="eu-ok">Enregistrer</button>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="modal-pwd">
+  <div class="modal">
+    <h3 id="pwd-titre">Changer le mot de passe</h3>
+    <input type="password" id="pwd-new" placeholder="Nouveau mot de passe (6 car. min.)" autocomplete="new-password"/>
+    <input type="password" id="pwd-new2" placeholder="Confirmer" autocomplete="new-password" style="margin-top:8px"/>
+    <div id="pwd-err" style="color:var(--rouge);font-size:13px;font-weight:600;min-height:18px;margin:6px 0"></div>
+    <div class="row-btns" style="justify-content:flex-end">
+      <button class="btn ghost" id="pwd-cancel">Annuler</button>
+      <button class="btn" id="pwd-ok">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<div id="alerte-fond" hidden>
+  <div class="alerte-boite" role="alertdialog" aria-modal="true" aria-labelledby="alerte-titre">
+    <div class="alerte-icone">⚠️</div>
+    <h3 id="alerte-titre">Erreur</h3>
+    <p id="alerte-msg"></p>
+    <button class="btn" id="alerte-ok">OK</button>
+  </div>
+</div>
+<div id="toast"></div>
+
+<nav class="tabbar">
+  <button data-tab="profil"><span class="ico">🧑‍🏫</span>Profil</button>
+  <button data-tab="evaluations"><span class="ico">🗓️</span>Évaluations</button>
+  <button data-tab="eleves"><span class="ico">👨‍🎓</span>Élèves</button>
+  <button class="active" data-tab="saisie"><span class="ico">✍️</span>Saisie</button>
+  <button data-tab="pdf"><span class="ico">📄</span>Résultats</button>
+  <button data-tab="listes"><span class="ico">📚</span>Liste élèves</button>
+  <button data-tab="tableaux"><span class="ico">🗂️</span>Tableaux</button>
+  <button data-tab="parametres"><span class="ico">⚙️</span>Paramètres</button>
+  <button data-tab="classes"><span class="ico">🏫</span>Classes</button>
+  <button data-tab="repartitions"><span class="ico">🗂️</span>Répartitions</button>
+  <button class="nav-action" id="btn-sauvegarder" title="Sauvegarder les données"><span class="ico">💾</span>Sauvegarder</button>
+  <button class="nav-action" id="btn-restaurer" title="Restaurer une sauvegarde"><span class="ico">📂</span>Restaurer</button>
+</nav>
+<input type="file" id="file-restaurer" accept=".json,application/json" style="display:none"/>
+
+</div>
+
+<script>
+/* =====================================================
+   STOCKAGE
+   ===================================================== */
+const STORE_KEY = 'notascol_data_v2';
+const $ = id => document.getElementById(id);
+
+const DEFAULT_MATIERES = ['EX.TEXTE','A.E.M','MATH','EDHC','LECTURE','DICTEE','POESIE'];
+function defaultMatieres(){
+  return DEFAULT_MATIERES.map(n=>({id:n, nom:n, bareme:20}));
+}
+
+const defaultData = {
+  parametres: {
+    republique: "République de Côte d'Ivoire",
+    devise: "Union – Discipline – Travail",
+    ministere: "Ministère de l'Éducation Nationale et de l'Alphabétisation",
+    direction: "Direction Régionale de l'Éducation Nationale",
+    inspection: "Inspection de l'Enseignement Préscolaire et Primaire",
+    etablissement: "École Primaire Publique",
+    coordonnees: "",
+    directeur: "",
+    anneeScolaire: "",
+    logoCI: "",
+    logoEcole: ""
+  },
+  matieres: defaultMatieres(),
+  repartitions: [],
+  repartitionClasse: {},
+  classes: [],
+  evaluations: [{id:'evaco1',nom:'EVACO 1'},{id:'evaco2',nom:'EVACO 2'},{id:'evaco3',nom:'EVACO 3'},{id:'evaco4',nom:'EVACO 4'}],
+  profils: {},
+  espaces: {}
+};
+
+let DATA = loadData();
+
+function espace(){
+  if(!currentUser) return {eleves: [], notes: {}};
+  if(!DATA.espaces[currentUser.id]) DATA.espaces[currentUser.id] = {eleves: [], notes: {}};
+  return DATA.espaces[currentUser.id];
+}
+function attachSpace(D){
+  Object.defineProperty(D, 'eleves', {get(){ return espace().eleves; }, set(v){ espace().eleves = v; }, enumerable:false, configurable:true});
+  Object.defineProperty(D, 'notes',  {get(){ return espace().notes; },  set(v){ espace().notes = v; },  enumerable:false, configurable:true});
+}
+attachSpace(DATA);
+let currentFeuille = 'evaco1';
+let currentClasseNotes = '';
+let currentPeriodeNotes = '';
+
+function loadData(){
+  try{
+    const raw = localStorage.getItem(STORE_KEY);
+    if(!raw) return JSON.parse(JSON.stringify(defaultData));
+    const d = JSON.parse(raw);
+    const out = JSON.parse(JSON.stringify(defaultData));
+    if(d.parametres) Object.assign(out.parametres, d.parametres);
+    if(Array.isArray(d.matieres) && d.matieres.length){
+      out.matieres = d.matieres.filter(m=>m && m.id).map(m=>({
+        id: String(m.id), nom: String(m.nom || m.id), bareme: Number(m.bareme)>0 ? Number(m.bareme) : 20
+      }));
+    }
+    if(Array.isArray(d.repartitions)) out.repartitions = d.repartitions;
+    if(d.repartitionClasse && typeof d.repartitionClasse==='object') out.repartitionClasse = d.repartitionClasse;
+    if(Array.isArray(d.classes)) out.classes = d.classes.map(c=>String(c)).filter(c=>c.trim());
+    if(Array.isArray(d.evaluations) && d.evaluations.length){
+      out.evaluations = d.evaluations.filter(e=>e && e.id).map(e=>({id:String(e.id), nom:String(e.nom || e.id)}));
+    }
+    if(d.profils && typeof d.profils==='object') out.profils = d.profils;
+    if(d.espaces && typeof d.espaces==='object') out.espaces = d.espaces;
+    return out;
+  }catch(e){
+    console.warn('Erreur chargement', e);
+    return JSON.parse(JSON.stringify(defaultData));
+  }
+}
+function saveData(){
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify(DATA)); }
+  catch(e){ toast('Erreur de sauvegarde locale'); }
+}
+
+/* =====================================================
+   TOAST
+   ===================================================== */
+let toastTimer;
+function dialogueErreur(message, titre = 'Erreur'){
+  $('alerte-titre').textContent = titre;
+  $('alerte-msg').textContent = message;
+  $('alerte-fond').hidden = false;
+  setTimeout(()=>$('alerte-ok').focus(), 30);
+}
+$('alerte-ok').addEventListener('click', ()=>{ $('alerte-fond').hidden = true; });
+$('alerte-fond').addEventListener('click', e=>{ if(e.target.id === 'alerte-fond') $('alerte-fond').hidden = true; });
+document.addEventListener('keydown', e=>{ if(e.key === 'Escape' && !$('alerte-fond').hidden) $('alerte-fond').hidden = true; });
+
+// Messages d'erreur : affichés dans une boîte de dialogue (et non plus en bandeau discret)
+const MOTS_ERREUR = /impossible|invalide|échec|erreur|il faut|doit |donnez|choisissez|autorisez|réservé|existe|vide|expiré|indisponible|illisible|pas une|deux évaluations|dépasse|contactez|incorrect|négative|pas être|ne peut/i;
+function toast(msg){
+  if(MOTS_ERREUR.test(String(msg))){ dialogueErreur(msg); return; }
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 2600);
+}
+
+/* =====================================================
+   AUTH
+   ===================================================== */
+const USERS_KEY = 'notascol_users_v2';
+const SESSION_KEY = 'notascol_session_v2';
+let USERS = loadUsers();
+let currentUser = null;
+let setupMode = false;
+let loginFails = 0, lockUntil = 0;
+let pwdTargetId = null;
+
+function loadUsers(){
+  try{
+    const u = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
+    return Array.isArray(u) ? u : [];
+  }catch(e){ return []; }
+}
+function saveUsers(){
+  try{ localStorage.setItem(USERS_KEY, JSON.stringify(USERS)); }
+  catch(e){ toast('Erreur de sauvegarde des utilisateurs'); }
+}
+
+function sha256hex(msg){
+  const K = [0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,
+    0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,
+    0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,
+    0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,
+    0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,
+    0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,
+    0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,
+    0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2];
+  const bytes = new TextEncoder().encode(msg);
+  const l = bytes.length;
+  const buf = new Uint8Array(((l + 9 + 63) >> 6) << 6);
+  buf.set(bytes);
+  buf[l] = 0x80;
+  const dv = new DataView(buf.buffer);
+  dv.setUint32(buf.length - 8, Math.floor(l * 8 / 4294967296));
+  dv.setUint32(buf.length - 4, (l * 8) >>> 0);
+  let h0=0x6a09e667,h1=0xbb67ae85,h2=0x3c6ef372,h3=0xa54ff53a,h4=0x510e527f,h5=0x9b05688c,h6=0x1f83d9ab,h7=0x5be0cd19;
+  const w = new Uint32Array(64);
+  for(let i=0;i<buf.length;i+=64){
+    for(let t=0;t<16;t++) w[t] = dv.getUint32(i+t*4);
+    for(let t=16;t<64;t++){
+      const x = w[t-15], y = w[t-2];
+      const s0 = ((x>>>7)|(x<<25)) ^ ((x>>>18)|(x<<14)) ^ (x>>>3);
+      const s1 = ((y>>>17)|(y<<15)) ^ ((y>>>19)|(y<<13)) ^ (y>>>10);
+      w[t] = (w[t-16] + s0 + w[t-7] + s1) >>> 0;
+    }
+    let a=h0,b=h1,c=h2,d=h3,e=h4,f=h5,g=h6,h=h7;
+    for(let t=0;t<64;t++){
+      const S1 = ((e>>>6)|(e<<26)) ^ ((e>>>11)|(e<<21)) ^ ((e>>>25)|(e<<7));
+      const ch = (e&f) ^ (~e&g);
+      const t1 = (h + S1 + ch + K[t] + w[t]) >>> 0;
+      const S0 = ((a>>>2)|(a<<30)) ^ ((a>>>13)|(a<<19)) ^ ((a>>>22)|(a<<10));
+      const mj = (a&b) ^ (a&c) ^ (b&c);
+      const t2 = (S0 + mj) >>> 0;
+      h=g; g=f; f=e; e=(d+t1)>>>0; d=c; c=b; b=a; a=(t1+t2)>>>0;
+    }
+    h0=(h0+a)>>>0; h1=(h1+b)>>>0; h2=(h2+c)>>>0; h3=(h3+d)>>>0;
+    h4=(h4+e)>>>0; h5=(h5+f)>>>0; h6=(h6+g)>>>0; h7=(h7+h)>>>0;
+  }
+  return [h0,h1,h2,h3,h4,h5,h6,h7].map(x=>x.toString(16).padStart(8,'0')).join('');
+}
+
+function randSalt(){
+  const a = new Uint8Array(12);
+  if(typeof crypto!=='undefined' && crypto.getRandomValues) crypto.getRandomValues(a);
+  else for(let i=0;i<a.length;i++) a[i] = Math.floor(Math.random()*256);
+  return Array.from(a).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+function hashPwd(pwd, salt){
+  let h = sha256hex(salt + ':' + pwd);
+  for(let i=0;i<1000;i++) h = sha256hex(h + salt + pwd);
+  return h;
+}
+function isAdmin(){ return !!currentUser && currentUser.role==='admin'; }
+
+function showLogin(){
+  setupMode = USERS.length===0;
+  $('app').style.display = 'none';
+  $('login-screen').style.display = 'flex';
+  $('login-sub').textContent = setupMode
+    ? 'Première utilisation : créez le compte administrateur.'
+    : 'Connectez-vous pour accéder à l\'application.';
+  $('login-confirm-wrap').style.display = setupMode ? 'block' : 'none';
+  $('btn-login').textContent = setupMode ? 'Créer le compte administrateur' : 'Se connecter';
+  $('login-err').textContent = '';
+  $('login-pass').value = '';
+  $('login-pass2').value = '';
+  setTimeout(()=>{ try{ $('login-user').focus(); }catch(e){} }, 50);
+}
+
+function majEcoleHeader(){
+  const el = $('hdr-ecole');
+  if(!el) return;
+  const nom = currentUser ? (effP().etablissement || '') : '';
+  el.textContent = nom;
+}
+
+function applyRole(){
+  majEcoleHeader();
+  $('user-badge').textContent = currentUser.nom + (isAdmin() ? ' (admin)' : '');
+  // Admin n'est pas enseignant : pas d'onglets Saisie / Élèves / Résultats
+  const adminOnlyHide = ['saisie','eleves','pdf','listes','stats','tableaux'];
+  document.querySelectorAll('nav.tabbar button').forEach(b=>{
+    const t = b.dataset.tab;
+    if(t==='parametres'||t==='classes'||t==='repartitions'){
+      b.style.display = isAdmin() ? '' : 'none';
+    }else if(adminOnlyHide.includes(t)){
+      b.style.display = isAdmin() ? 'none' : '';
+    }
+  });
+  // Afficher la barre de sélection utilisateur dans Profil pour l'admin
+  $('pf-admin-user-wrap').style.display = isAdmin() ? 'block' : 'none';
+}
+
+function showApp(){
+  $('login-screen').style.display = 'none';
+  $('app').style.display = 'block';
+  $('login-user').value = '';
+  $('login-pass').value = '';
+  $('login-pass2').value = '';
+  applyRole();
+  rafraichirTout();
+  // Admin atterrit sur Profil, utilisateur sur Saisie
+  const defaultTab = isAdmin() ? 'profil' : 'saisie';
+  document.querySelector('nav.tabbar button[data-tab="'+defaultTab+'"]').click();
+}
+
+function rafraichirTout(){
+  reinitSaisie();
+  resetSelectionEleve();
+  renderPfAdminUserSelect();
+  fillProfilForm();
+  if(isAdmin()){ fillParamsForm(); renderAdminProfilForm(); }
+  refreshClasseSelect();
+  renderElevesTable();
+  renderPDF();
+}
+
+function viderAffichage(){
+  $('liste-users').innerHTML = '';
+  document.querySelectorAll('.table-eleves tbody').forEach(tb=>{ tb.innerHTML = ''; });
+  $('pdf-render').innerHTML = '';
+  reinitSaisie();
+  resetSelectionEleve();
+}
+
+function startSession(u){
+  currentUser = u;
+  try{ sessionStorage.setItem(SESSION_KEY, u.id); }catch(e){}
+  showApp();
+}
+
+function logout(){
+  currentUser = null;
+  viderAffichage();
+  try{ sessionStorage.removeItem(SESSION_KEY); }catch(e){}
+  showLogin();
+}
+
+// Un compte utilisateur est expiré si sa date d'échéance est antérieure à aujourd'hui (l'administrateur n'est pas concerné)
+function compteExpire(u){
+  if(!u || u.role==='admin') return false;
+  const pr = DATA.profils[u.id];
+  if(!pr || !pr.echeance) return false;
+  return pr.echeance < new Date().toLocaleDateString('en-CA');
+}
+
+function doLogin(){
+  const err = $('login-err');
+  if(!err.dataset.observe){
+    err.dataset.observe = '1';
+    new MutationObserver(()=>{ const t = err.textContent.trim(); if(t) dialogueErreur(t); })
+      .observe(err, {childList:true, characterData:true, subtree:true});
+  }
+  err.textContent = '';
+  const loginRaw = $('login-user').value.trim();
+  const login = loginRaw.toLowerCase();
+  const pwd = $('login-pass').value;
+
+  if(setupMode){
+    const pwd2 = $('login-pass2').value;
+    if(login.length<3){ err.textContent = 'L\'identifiant doit contenir au moins 3 caractères.'; return; }
+    if(pwd.length<6){ err.textContent = 'Le mot de passe doit contenir au moins 6 caractères.'; return; }
+    if(pwd!==pwd2){ err.textContent = 'Les deux mots de passe ne correspondent pas.'; return; }
+    const salt = randSalt();
+    const u = {id:'u'+Date.now().toString(36), login, nom:loginRaw, salt, hash:hashPwd(pwd,salt), role:'admin'};
+    USERS.push(u);
+    saveUsers();
+    startSession(u);
+    return;
+  }
+
+  const now = Date.now();
+  if(now<lockUntil){
+    err.textContent = 'Trop de tentatives. Réessayez dans ' + Math.ceil((lockUntil-now)/1000) + ' s.';
+    return;
+  }
+  const u = USERS.find(x=>x.login===login);
+  if(u && hashPwd(pwd, u.salt)===u.hash){
+    loginFails = 0;
+    if(compteExpire(u)){
+      err.textContent = 'Ce compte a expiré le ' + formatDateFr(DATA.profils[u.id].echeance) + '. Contactez l\'administrateur.';
+      return;
+    }
+    startSession(u);
+    return;
+  }
+  loginFails++;
+  if(loginFails>=5){
+    lockUntil = now + 30000;
+    loginFails = 0;
+    err.textContent = 'Trop de tentatives. Réessayez dans 30 s.';
+  }else{
+    err.textContent = 'Identifiant ou mot de passe incorrect.';
+  }
+}
+
+function bootAuth(){
+  let u = null;
+  try{
+    const id = sessionStorage.getItem(SESSION_KEY);
+    if(id) u = USERS.find(x=>x.id===id) || null;
+  }catch(e){}
+  if(u && compteExpire(u)){
+    try{ sessionStorage.removeItem(SESSION_KEY); }catch(e){}
+    u = null;
+  }
+  if(u){ currentUser = u; showApp(); }
+  else showLogin();
+}
+
+$('btn-login').addEventListener('click', doLogin);
+['login-user','login-pass','login-pass2'].forEach(id=>{
+  $(id).addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
+});
+$('btn-logout').addEventListener('click', logout);
+
+
+/* ---------- Utilisateurs ---------- */
+let editUserId = null;
+
+// Mot de passe provisoire lisible (sans caractères ambigus : 0/O, 1/l/I)
+function motDePasseProvisoire(){
+  const c = 'abcdefghjkmnpqrstuvwxyz23456789';
+  let m = '';
+  for(let i = 0; i < 8; i++) m += c[Math.floor(Math.random() * c.length)];
+  return m;
+}
+
+function renderUsers(){
+  const box = $('liste-users');
+  box.innerHTML = USERS.map(u=>`
+    <div class="user-row" data-id="${escapeHtml(u.id)}">
+      <div class="u-info"><strong>${escapeHtml(u.nom)}</strong>
+        <span class="badge ${u.role==='admin'?'ok':'neu'}">${u.role==='admin'?'Administrateur':'Utilisateur'}</span>
+        ${currentUser && u.id===currentUser.id ? '<span class="hint">(vous)</span>' : ''}</div>
+      ${USERS.some(x=>x.role==='admin') ? '' : `<button class="btn ghost u-role" title="Rendre administrateur">Rendre admin</button>`}
+      <button class="btn ghost u-edit" title="Modifier l'identifiant et le mot de passe">✏️ Modifier</button>
+      <button class="btn ghost u-prov" title="Générer un mot de passe provisoire à communiquer">🔐 Provisoire</button>
+      <button class="btn bleu u-pwd" title="Changer le mot de passe">🔑</button>
+      <button class="btn rouge u-del" title="Supprimer">🗑️</button>
+    </div>`).join('');
+  box.querySelectorAll('.user-row').forEach(row=>{
+    const id = row.dataset.id;
+    const bRole = row.querySelector('.u-role');
+    if(bRole) bRole.addEventListener('click', ()=>{
+      const u = USERS.find(x=>x.id===id);
+      if(!u) return;
+      if(u.role==='admin' && USERS.filter(x=>x.role==='admin').length<=1){
+        toast('Il faut conserver au moins un administrateur'); return;
+      }
+      u.role = u.role==='admin' ? 'user' : 'admin';
+      saveUsers();
+      renderUsers();
+      renderAdminProfilForm();
+      renderPfAdminUserSelect();
+      applyRole();
+      toast('Rôle modifié');
+    });
+    row.querySelector('.u-edit').addEventListener('click', ()=>{
+      const u = USERS.find(x=>x.id===id);
+      if(!u) return;
+      editUserId = id;
+      $('eu-titre').textContent = 'Modifier « ' + u.nom + ' »';
+      $('eu-login').value = u.nom || u.login || '';
+      $('eu-pwd').value = '';
+      $('eu-pwd2').value = '';
+      $('modal-edit').classList.add('show');
+    });
+    row.querySelector('.u-prov').addEventListener('click', ()=>{
+      const u = USERS.find(x=>x.id===id);
+      if(!u) return;
+      const mdp = motDePasseProvisoire();
+      u.salt = randSalt();
+      u.hash = hashPwd(mdp, u.salt);
+      saveUsers();
+      dialogueErreur(`Mot de passe provisoire de ${u.nom} : ${mdp}. Communiquez-le à l'utilisateur, qui pourra le modifier ensuite.`, 'Nouveau mot de passe');
+    });
+    row.querySelector('.u-pwd').addEventListener('click', ()=>{
+      const u = USERS.find(x=>x.id===id);
+      if(!u) return;
+      pwdTargetId = id;
+      $('pwd-titre').textContent = 'Mot de passe de ' + u.nom;
+      $('pwd-new').value = '';
+      $('pwd-new2').value = '';
+      $('pwd-err').textContent = '';
+      $('modal-pwd').classList.add('show');
+    });
+    row.querySelector('.u-del').addEventListener('click', ()=>{
+      const u = USERS.find(x=>x.id===id);
+      if(!u) return;
+      if(currentUser && u.id===currentUser.id){ toast('Vous ne pouvez pas supprimer votre propre compte'); return; }
+      if(u.role==='admin' && USERS.filter(x=>x.role==='admin').length<=1){ toast('Il faut conserver au moins un administrateur'); return; }
+      confirmAction('Supprimer l\'utilisateur', `Supprimer le compte « ${u.nom} » ?`, ()=>{
+        USERS = USERS.filter(x=>x.id!==id);
+        saveUsers();
+        renderUsers();
+        renderAdminProfilForm();
+        renderPfAdminUserSelect();
+        toast('Utilisateur supprimé');
+      });
+    });
+  });
+}
+
+$('eu-cancel').addEventListener('click', ()=>{
+  $('modal-edit').classList.remove('show');
+  editUserId = null;
+});
+$('eu-ok').addEventListener('click', ()=>{
+  const u = USERS.find(x=>x.id===editUserId);
+  if(!u){ $('modal-edit').classList.remove('show'); return; }
+  const nomRaw = $('eu-login').value.trim();
+  const login = nomRaw.toLowerCase();
+  const pwd = $('eu-pwd').value;
+  const pwd2 = $('eu-pwd2').value;
+  if(login.length < 3){ dialogueErreur("L'identifiant doit contenir au moins 3 caractères."); return; }
+  if(USERS.some(x=>x.id!==u.id && x.login===login)){ dialogueErreur('Cet identifiant existe déjà. Choisissez-en un autre.'); return; }
+  if(pwd !== '' && pwd.length < 6){ dialogueErreur('Le mot de passe doit contenir au moins 6 caractères.'); return; }
+  if(pwd !== pwd2){ dialogueErreur('Les deux mots de passe ne correspondent pas.'); return; }
+  u.login = login;
+  u.nom = nomRaw;
+  if(pwd !== ''){
+    u.salt = randSalt();
+    u.hash = hashPwd(pwd, u.salt);
+  }
+  saveUsers();
+  $('modal-edit').classList.remove('show');
+  editUserId = null;
+  renderUsers();
+  renderAdminProfilForm();
+  renderPfAdminUserSelect();
+  majEcoleHeader();
+  toast('Utilisateur modifié');
+});
+$('pwd-cancel').addEventListener('click', ()=>{ $('modal-pwd').classList.remove('show'); pwdTargetId = null; });
+$('pwd-ok').addEventListener('click', ()=>{
+  const u = USERS.find(x=>x.id===pwdTargetId);
+  if(!u){ $('modal-pwd').classList.remove('show'); return; }
+  const a = $('pwd-new').value, b = $('pwd-new2').value;
+  if(a.length<6){ $('pwd-err').textContent = 'Au moins 6 caractères.'; return; }
+  if(a!==b){ $('pwd-err').textContent = 'Les deux mots de passe ne correspondent pas.'; return; }
+  u.salt = randSalt();
+  u.hash = hashPwd(a, u.salt);
+  saveUsers();
+  $('modal-pwd').classList.remove('show');
+  pwdTargetId = null;
+  toast('Mot de passe modifié');
+});
+
+$('btn-add-user').addEventListener('click', ()=>{
+  const nomRaw = $('nu-login').value.trim();
+  const login = nomRaw.toLowerCase();
+  const pwd = $('nu-pass').value;
+  const role = $('nu-role').value === 'admin' ? 'admin' : 'user';
+  if(login.length<3){ toast('L\'identifiant doit contenir au moins 3 caractères'); return; }
+  if(pwd.length<6){ toast('Le mot de passe doit contenir au moins 6 caractères'); return; }
+  if(USERS.some(x=>x.login===login)){ toast('Cet identifiant existe déjà'); return; }
+  const salt = randSalt();
+  USERS.push({id:'u'+Date.now().toString(36)+Math.random().toString(36).slice(2,4), login, nom:nomRaw, salt, hash:hashPwd(pwd,salt), role});
+  saveUsers();
+  $('nu-login').value = '';
+  $('nu-pass').value = '';
+  renderUsers();
+  renderAdminProfilForm();
+  renderPfAdminUserSelect();
+  toast('Utilisateur ajouté');
+});
+
+/* =====================================================
+   MATIERES ET REPARTITIONS
+   ===================================================== */
+function renderMatieresList(){
+  const box = $('liste-matieres');
+  box.innerHTML = DATA.matieres.map(m=>`
+    <div class="mat-row" data-id="${escapeHtml(m.id)}">
+      <input class="mat-nom" value="${escapeHtml(m.nom)}" placeholder="Titre" aria-label="Titre"/>
+      <span class="slash">/</span>
+      <input class="mat-bar" type="number" min="1" step="0.5" inputmode="decimal" value="${m.bareme}" aria-label="Total"/>
+      <button class="btn rouge mat-del" title="Supprimer">✕</button>
+    </div>`).join('');
+  box.querySelectorAll('.mat-row').forEach(row=>{
+    const id = row.dataset.id;
+    const m = matById(id);
+    const nomInp = row.querySelector('.mat-nom');
+    const barInp = row.querySelector('.mat-bar');
+    nomInp.addEventListener('change', ()=>{
+      const v = nomInp.value.trim();
+      if(!v){ nomInp.value = m.nom; toast('Titre vide'); return; }
+      if(DATA.matieres.some(x=>x.id!==id && x.nom.toLowerCase()===v.toLowerCase())){
+        nomInp.value = m.nom; toast('Matière déjà existante'); return;
+      }
+      m.nom = v;
+      saveData();
+      renderRepartitions();
+      toast('Titre modifié');
+    });
+    barInp.addEventListener('change', ()=>{
+      let c = parseFloat(String(barInp.value).replace(',','.'));
+      if(isNaN(c) || c<=0) c = m.bareme;
+      barInp.value = c;
+      m.bareme = c;
+      saveData();
+      toast('Total enregistré');
+    });
+    row.querySelector('.mat-del').addEventListener('click', ()=>{
+      if(DATA.matieres.length<=1){ toast('Au moins une matière'); return; }
+      confirmAction('Supprimer la matière', `Supprimer « ${m.nom} » ?`, ()=>{
+        DATA.matieres = DATA.matieres.filter(x=>x.id!==id);
+        DATA.repartitions.forEach(r=>{ r.matieres = r.matieres.filter(x=>x!==id); });
+        saveData();
+        renderMatieresList();
+        renderRepartitions();
+        toast('Matière supprimée');
+      });
+    });
+  });
+}
+
+$('btn-add-matiere').addEventListener('click', ()=>{
+  const id = 'm' + Date.now().toString(36) + Math.random().toString(36).slice(2,5);
+  let nom = 'NOUVELLE MATIERE', k = 2;
+  while(DATA.matieres.some(x=>x.nom.toLowerCase()===nom.toLowerCase())) nom = 'NOUVELLE MATIERE ' + (k++);
+  DATA.matieres.push({id, nom, bareme:20});
+  saveData();
+  renderMatieresList();
+  renderRepartitions();
+  const champ = document.querySelector('#liste-matieres .mat-row:last-child .mat-nom');
+  if(champ){ champ.focus(); champ.select(); }
+});
+
+let repEditId = '';
+
+function classesConnues(){
+  const set = new Set();
+  Object.keys(DATA.profils).forEach(id=>{ const c = (DATA.profils[id] || {}).classe; if(c) set.add(c); });
+  Object.keys(DATA.repartitionClasse).forEach(c=>set.add(c));
+  (DATA.classes || []).forEach(c=>set.add(c));
+  return Array.from(set).sort((a,b)=>a.localeCompare(b,'fr'));
+}
+
+function baremesLus(ids){
+  const out = {};
+  ids.forEach(id=>{
+    const inp = document.querySelector('#rep-checks .rep-bar[data-id="' + id + '"]');
+    const v = inp ? Number(inp.value) : NaN;
+    const m = matById(id);
+    out[id] = (!isNaN(v) && v>0) ? v : (m ? m.bareme : 20);
+  });
+  return out;
+}
+
+function fillSelectClasses(sel, valeur){
+  const cls = classesConnues();
+  if(valeur && !cls.includes(valeur)) cls.push(valeur);
+  sel.innerHTML = '<option value="">— Choisir une classe —</option>' + cls.map(c=>`<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
+  sel.value = valeur || '';
+}
+
+function renderClasses(){
+  const box = $('cl-liste');
+  const liste = (DATA.classes || []).slice().sort((a,b)=>a.localeCompare(b,'fr'));
+  if(!liste.length){ box.innerHTML = '<p class="hint">Aucune classe créée pour le moment.</p>'; return; }
+  box.innerHTML = liste.map(c=>{
+    const utilisee = Object.keys(DATA.profils).some(id => normKey((DATA.profils[id]||{}).classe) === normKey(c));
+    return `<div class="mat-row" data-cl="${escapeHtml(c)}"><span style="flex:1;font-weight:600">${escapeHtml(c)}</span>`
+      + (utilisee ? '<span class="hint" style="margin:0">utilisée par un profil</span>' : '')
+      + `<button class="btn rouge cl-del" ${utilisee?'disabled':''}>Supprimer</button></div>`;
+  }).join('');
+  box.querySelectorAll('.cl-del').forEach(btn=>btn.addEventListener('click', ()=>{
+    const c = btn.closest('.mat-row').dataset.cl;
+    DATA.classes = (DATA.classes || []).filter(x=>x!==c);
+    Object.keys(DATA.repartitionClasse).forEach(k=>{ if(normKey(k)===normKey(c)) delete DATA.repartitionClasse[k]; });
+    saveData();
+    renderClasses();
+    renderRepartitions();
+    toast('Classe supprimée');
+  }));
+}
+
+$('btn-cl-add').addEventListener('click', ()=>{
+  const nom = $('cl-nom').value.trim().replace(/\s+/g, ' ');
+  if(!nom){ toast('Donnez un nom de classe'); return; }
+  if(classesConnues().some(c=>normKey(c)===normKey(nom))){ toast('Cette classe existe déjà'); return; }
+  DATA.classes = DATA.classes || [];
+  DATA.classes.push(nom);
+  saveData();
+  $('cl-nom').value = '';
+  renderClasses();
+  renderRepartitions();
+  toast('Classe créée');
+});
+$('cl-nom').addEventListener('keydown', e=>{ if(e.key==='Enter') $('btn-cl-add').click(); });
+
+function retirerRepartitionAffectations(id){
+  Object.keys(DATA.repartitionClasse).forEach(cl=>{
+    const o = repClasseLire(cl);
+    Object.keys(o).forEach(k=>{ if(o[k]===id) o[k] = ''; });
+    repClasseEcrire(cl, o);
+  });
+}
+
+function renderAffectations(){
+  const box = $('rep-classes');
+  const classes = classesConnues();
+  if(!classes.length){
+    box.innerHTML = '<p class="hint">Aucune classe créée. Créez-les dans l\'onglet Classes.</p>';
+    return;
+  }
+  const reps = DATA.repartitions.map(r=>`<option value="${escapeHtml(r.id)}">${escapeHtml(r.nom)}</option>`).join('');
+  const sel = (c, k, vide)=>`<select data-classe="${escapeHtml(c)}" data-k="${k}"><option value="">${vide}</option>${reps}</select>`;
+  const lignes = classes.map(c=>
+    `<tr><td class="nom"><strong>${escapeHtml(c)}</strong></td><td>${sel(c,'general','— Aucune —')}</td>` +
+    evaluations().map(e=>`<td>${sel(c,e.id,'Identique à la générale')}</td>`).join('') + '</tr>'
+  ).join('');
+  box.innerHTML = `<div class="table-notes-wrap"><table class="notes rep-aff">
+    <thead><tr><th>Classe</th><th>Répartition générale</th>${evaluations().map(e=>`<th>${escapeHtml(e.nom)}</th>`).join('')}</tr></thead>
+    <tbody>${lignes}</tbody></table></div>`;
+  box.querySelectorAll('select').forEach(se=>{
+    const c = se.dataset.classe;
+    const k = se.dataset.k;
+    se.value = repClasseLire(c)[k] || '';
+    se.addEventListener('change', ()=>{
+      const o = repClasseLire(c);
+      o[k] = se.value;
+      repClasseEcrire(c, o);
+      saveData();
+      toast('Affectation enregistrée pour « ' + c + ' »');
+    });
+  });
+}
+
+function renderRepartitions(){
+  if(repEditId && !DATA.repartitions.some(r=>r.id===repEditId)) repEditId = '';
+  const se = $('rep-edit-select');
+  se.innerHTML = '<option value="">➕ Nouvelle répartition</option>' +
+    DATA.repartitions.map(r=>`<option value="${escapeHtml(r.id)}">${escapeHtml(r.nom)}</option>`).join('');
+  se.value = repEditId;
+  const rep = DATA.repartitions.find(r=>r.id===repEditId);
+  $('rep-nom').value = rep ? rep.nom : '';
+  $('rep-checks').innerHTML = DATA.matieres.map(m=>
+    `<tr><td class="ctr"><input type="checkbox" class="rep-mat" value="${escapeHtml(m.id)}" ${(!rep || rep.matieres.includes(m.id)) ? 'checked' : ''}/></td>` +
+    `<td class="nom">${escapeHtml(m.nom)}</td>` +
+    `<td><input class="rep-bar" type="number" min="1" step="0.5" inputmode="decimal" data-id="${escapeHtml(m.id)}" value="${(rep && rep.baremes && rep.baremes[m.id]) ? rep.baremes[m.id] : m.bareme}" aria-label="Total de points"/></td></tr>`
+  ).join('');
+  $('btn-rep-del').disabled = !rep;
+  renderAffectations();
+}
+
+$('btn-rep-tout').addEventListener('click', ()=>{
+  document.querySelectorAll('#rep-checks input.rep-mat').forEach(c=>{ c.checked = true; });
+});
+$('btn-rep-rien').addEventListener('click', ()=>{
+  document.querySelectorAll('#rep-checks input.rep-mat').forEach(c=>{ c.checked = false; });
+});
+
+$('rep-edit-select').addEventListener('change', ()=>{
+  repEditId = $('rep-edit-select').value;
+  renderRepartitions();
+});
+
+$('btn-rep-save').addEventListener('click', ()=>{
+  const nom = $('rep-nom').value.trim();
+  const ids = Array.from($('rep-checks').querySelectorAll('input.rep-mat:checked')).map(i=>i.value);
+  if(!nom){ toast('Donnez un nom'); return; }
+  if(ids.length===0){ toast('Cochez au moins une matière'); return; }
+  if(DATA.repartitions.some(r=>r.id!==repEditId && r.nom.toLowerCase()===nom.toLowerCase())){
+    toast('Nom déjà utilisé'); return;
+  }
+  if(repEditId){
+    const rep = DATA.repartitions.find(r=>r.id===repEditId);
+    rep.nom = nom;
+    rep.matieres = ids;
+    rep.baremes = baremesLus(ids);
+    toast('Répartition enregistrée');
+  }else{
+    const id = 'r' + Date.now().toString(36) + Math.random().toString(36).slice(2,4);
+    DATA.repartitions.push({id, nom, matieres: ids, baremes: baremesLus(ids)});
+    repEditId = id;
+    toast('Répartition créée');
+  }
+  saveData();
+  renderRepartitions();
+});
+
+$('btn-rep-del').addEventListener('click', ()=>{
+  const rep = DATA.repartitions.find(r=>r.id===repEditId);
+  if(!rep) return;
+  confirmAction('Supprimer la répartition', `Supprimer « ${rep.nom} » ?`, ()=>{
+    DATA.repartitions = DATA.repartitions.filter(r=>r.id!==rep.id);
+    retirerRepartitionAffectations(rep.id);
+    repEditId = '';
+    saveData();
+    renderRepartitions();
+    toast('Répartition supprimée');
+  });
+});
+
+/* =====================================================
+   NAVIGATION
+   ===================================================== */
+document.querySelectorAll('nav.tabbar button[data-tab]').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const tab = btn.dataset.tab;
+    majEcoleHeader();
+    if((tab==='classes'||tab==='repartitions') && !isAdmin()) return;
+    if(tab==='parametres' && !isAdmin()){ toast('Accès réservé à l\'administrateur'); return; }
+    document.querySelectorAll('nav.tabbar button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+    document.getElementById('sec-'+tab).classList.add('active');
+    if(tab==='pdf') renderPDF();
+    if(tab==='saisie'){ refreshClasseSelect(); if(currentClasseNotes) renderNotesTable(); }
+    if(tab==='tableaux') fillChants();
+    if(tab==='eleves'||tab==='listes'||tab==='stats'||tab==='tableaux') renderElevesTable();
+    if(tab==='parametres'){ fillParamsForm(); renderAdminProfilForm(); }
+    if(tab==='classes') renderClasses();
+    if(tab==='evaluations') renderEvaluations();
+    if(tab==='repartitions') renderRepartitions();
+    if(tab==='profil'){ renderPfAdminUserSelect(); fillProfilForm(); }
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
+});
+
+/* =====================================================
+   PROFIL UTILISATEUR
+   ===================================================== */
+const PROFIL_CHAMPS_VERROUILLES = [
+  {k:'inspection', label:'Inspection (IEP)'},
+  {k:'direction', label:'Direction régionale'},
+  {k:'inspecteur', label:"Nom de l'Inspecteur"},
+  {k:'etablissement', label:'École'},
+  {k:'classe', label:'Classe'},
+  {k:'directeur', label:'Nom du Directeur'},
+  {k:'anneeScolaire', label:'Année scolaire'},
+  {k:'nomMaitre', label:'Nom et prénoms du maître'}
+];
+
+function buildProfilVerrouForm(){
+  $('pf-verrou-grid').innerHTML = PROFIL_CHAMPS_VERROUILLES.map(c=>
+    `<div><label class="fld">${c.label}</label><input id="pfv-${c.k}" readonly disabled/></div>`
+  ).join('');
+}
+
+// Admin : sélection d'un utilisateur dans le profil
+function renderPfAdminUserSelect(){
+  const sel = $('pf-admin-user-select');
+  if(!isAdmin()) return;
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">-- Choisir un utilisateur --</option>' +
+    USERS.map(u=>`<option value="${escapeHtml(u.id)}">${escapeHtml(u.nom)} (${u.role})</option>`).join('');
+  if(cur) sel.value = cur;
+  else if(USERS.length) sel.value = USERS[0].id;
+  fillProfilForm();
+}
+
+$('pf-admin-user-select').addEventListener('change', fillProfilForm);
+
+function fillProfilForm(){
+  let pr = {};
+  if(isAdmin()){
+    // Admin : affiche le profil de l'utilisateur sélectionné
+    const uid = $('pf-admin-user-select').value;
+    pr = (uid && DATA.profils[uid]) || {};
+  }else{
+    pr = (currentUser && DATA.profils[currentUser.id]) || {};
+  }
+  PROFIL_CHAMPS_VERROUILLES.forEach(c=>{
+    const el = $('pfv-'+c.k);
+    if(el) el.value = pr[c.k] || DATA.parametres[c.k] || '';
+  });
+  $('btn-save-profil').disabled = isAdmin();
+}
+
+$('btn-save-profil').addEventListener('click', ()=>{
+  if(!currentUser || isAdmin()) return;
+  const pr = DATA.profils[currentUser.id] = DATA.profils[currentUser.id] || {};
+  toast('Profil enregistré');
+});
+
+/* =====================================================
+   ADMIN – PROFIL COMPLET UTILISATEUR
+   ===================================================== */
+function renderAdminProfilForm(){
+  if(!isAdmin()) return;
+  const sel = $('admin-user-select');
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">-- Choisir --</option>' + USERS.map(u=>
+    `<option value="${escapeHtml(u.id)}">${escapeHtml(u.nom)} (${u.role})</option>`
+  ).join('');
+  if(cur) sel.value = cur;
+  fillAdminProfilFields();
+}
+
+function fillAdminProfilFields(){
+  const uid = $('admin-user-select').value;
+  const pr = (uid && DATA.profils[uid]) || {};
+  $('ad-inspection').value = pr.inspection || DATA.parametres.inspection || '';
+  $('ad-etablissement').value = pr.etablissement || DATA.parametres.etablissement || '';
+  $('ad-direction').value = pr.direction || '';
+  $('ad-inspecteur').value = pr.inspecteur || '';
+  $('ad-echeance').value = pr.echeance || '';
+  fillSelectClasses($('ad-classe'), pr.classe || '');
+  $('ad-directeur').value = pr.directeur || DATA.parametres.directeur || '';
+  $('ad-annee').value = pr.anneeScolaire || DATA.parametres.anneeScolaire || '';
+  $('ad-nomMaitre').value = pr.nomMaitre || '';
+  setUserLogoPreview(pr.logoEcole || '');
+}
+
+function setUserLogoPreview(dataUrl){
+  const ph = $('ph-logo-user');
+  const img = $('prev-logo-user');
+  if(dataUrl){
+    img.src = dataUrl;
+    img.style.display = 'block';
+    ph.style.display = 'none';
+  }else{
+    img.style.display = 'none';
+    ph.style.display = 'block';
+  }
+}
+
+$('admin-user-select').addEventListener('change', fillAdminProfilFields);
+
+$('file-logo-user').addEventListener('change', async e=>{
+  const f = e.target.files[0];
+  if(!f) return;
+  if(!f.type.startsWith('image/')){ toast('Image requise'); return; }
+  const durl = await readFileAsDataURL(f);
+  setUserLogoPreview(durl);
+  $('file-logo-user').dataset.data = durl;
+});
+
+$('btn-save-echeance').addEventListener('click', ()=>{
+  const uid = $('admin-user-select').value;
+  if(!uid){ toast('Choisissez un utilisateur'); return; }
+  const pr = DATA.profils[uid] = DATA.profils[uid] || {};
+  const d = $('ad-echeance').value;
+  if(d) pr.echeance = d; else delete pr.echeance;
+  saveData();
+  toast(d ? 'Date d\'échéance enregistrée' : 'Date d\'échéance supprimée');
+});
+
+$('btn-save-admin-profil').addEventListener('click', ()=>{
+  const uid = $('admin-user-select').value;
+  if(!uid){ toast('Choisissez un utilisateur'); return; }
+  const pr = DATA.profils[uid] = DATA.profils[uid] || {};
+  pr.inspection = $('ad-inspection').value.trim();
+  pr.etablissement = $('ad-etablissement').value.trim();
+  pr.direction = $('ad-direction').value.trim();
+  pr.inspecteur = $('ad-inspecteur').value.trim();
+  pr.classe = $('ad-classe').value.trim();
+  pr.directeur = $('ad-directeur').value.trim();
+  pr.anneeScolaire = $('ad-annee').value.trim();
+  pr.nomMaitre = $('ad-nomMaitre').value.trim();
+  if($('file-logo-user').dataset.data){
+    pr.logoEcole = $('file-logo-user').dataset.data;
+    delete $('file-logo-user').dataset.data;
+  }
+  saveData();
+  fillAdminProfilFields();
+  refreshClasseSelect();
+  renderRepartitions();
+  renderPfAdminUserSelect();
+  majEcoleHeader();
+  toast('Profil enregistré');
+});
+
+/* =====================================================
+   PARAMETRES
+   ===================================================== */
+function effP(){
+  const base = DATA.parametres;
+  const pr = (currentUser && DATA.profils[currentUser.id]) || {};
+  const o = {};
+  PROFIL_CHAMPS_VERROUILLES.forEach(c=>{
+    const v = pr[c.k];
+    o[c.k] = (v!==undefined && String(v).trim()!=='') ? v : (base[c.k] || '');
+  });
+  evaluations().forEach(e=>{
+    const k = dateKey(e.id);
+    o[k] = (pr[k] && String(pr[k]).trim()!=='') ? pr[k] : (base[k] || '');
+  });
+  o.republique = base.republique || '';
+  o.devise = base.devise || '';
+  o.ministere = base.ministere || '';
+  o.coordonnees = pr.coordonnees || base.coordonnees || '';
+  o.logoCI = base.logoCI || '';
+  o.logoEcole = pr.logoEcole || base.logoEcole || '';
+  return o;
+}
+
+function reinitSaisie(){
+  currentClasseNotes = '';
+  currentPeriodeNotes = '';
+  $('saisie-classe').value = '';
+  $('search-notes').value = '';
+  $('zone-notes').innerHTML = '<p class="hint">Sélectionnez une classe puis cliquez sur « Charger les élèves ».</p>';
+}
+
+function fillParamsForm(){
+  const p = DATA.parametres;
+  $('p-republique').value = p.republique || '';
+  $('p-devise').value = p.devise || '';
+  $('p-ministere').value = p.ministere || '';
+  renderMatieresList();
+  renderRepartitions();
+  if(isAdmin()) renderUsers();
+  setLogoPreview('ci', p.logoCI);
+  setLogoPreview('ecole', p.logoEcole);
+}
+
+function setLogoPreview(which, dataUrl){
+  const ph = document.getElementById('ph-logo-'+which);
+  const img = document.getElementById('prev-logo-'+which);
+  if(dataUrl){
+    img.src = dataUrl;
+    img.style.display = 'block';
+    ph.style.display = 'none';
+  }else{
+    img.style.display = 'none';
+    ph.style.display = 'block';
+  }
+}
+
+function readFileAsDataURL(file){
+  return new Promise((resolve,reject)=>{
+    const r = new FileReader();
+    r.onload = ()=>resolve(r.result);
+    r.onerror = reject;
+    r.readAsDataURL(file);
+  });
+}
+
+$('file-logo-ci').addEventListener('change', async e=>{
+  const f = e.target.files[0];
+  if(!f) return;
+  if(!f.type.startsWith('image/')){ toast('Image requise'); return; }
+  const durl = await readFileAsDataURL(f);
+  DATA.parametres.logoCI = durl;
+  setLogoPreview('ci', durl);
+  saveData();
+  toast('Logo CI chargé');
+});
+$('file-logo-ecole').addEventListener('change', async e=>{
+  const f = e.target.files[0];
+  if(!f) return;
+  if(!f.type.startsWith('image/')){ toast('Image requise'); return; }
+  const durl = await readFileAsDataURL(f);
+  DATA.parametres.logoEcole = durl;
+  setLogoPreview('ecole', durl);
+  saveData();
+  toast('Logo école chargé');
+});
+
+$('btn-reset-logos').addEventListener('click', ()=>{
+  confirmAction('Retirer les logos', 'Retirer les deux logos ?', ()=>{
+    DATA.parametres.logoCI = '';
+    DATA.parametres.logoEcole = '';
+    setLogoPreview('ci','');
+    setLogoPreview('ecole','');
+    saveData();
+    toast('Logos retirés');
+  });
+});
+
+$('btn-save-params').addEventListener('click', ()=>{
+  const p = DATA.parametres;
+  p.republique = $('p-republique').value.trim();
+  p.devise = $('p-devise').value.trim();
+  p.ministere = $('p-ministere').value.trim();
+  saveData();
+  refreshClasseSelect();
+  fillParamsForm();
+  majEcoleHeader();
+  toast('Paramètres enregistrés');
+});
+
+$('btn-reset-params').addEventListener('click', ()=>{
+  confirmAction('Réinitialiser', 'Réinitialiser les informations de l\'établissement (hors logos) ?', ()=>{
+    const logos = {logoCI: DATA.parametres.logoCI, logoEcole: DATA.parametres.logoEcole};
+    DATA.parametres = JSON.parse(JSON.stringify(defaultData.parametres));
+    DATA.parametres.logoCI = logos.logoCI;
+    DATA.parametres.logoEcole = logos.logoEcole;
+    saveData();
+    fillParamsForm();
+    toast('Paramètres réinitialisés');
+  });
+});
+
+/* =====================================================
+   CALCULS
+   ===================================================== */
+function evaluations(){
+  const pr = currentUser && DATA.profils[currentUser.id];
+  if(!isAdmin() && pr && Array.isArray(pr.evaluations) && pr.evaluations.length) return pr.evaluations;
+  if(!Array.isArray(DATA.evaluations) || !DATA.evaluations.length){
+    DATA.evaluations = [1,2,3,4].map(n=>({id:'evaco'+n, nom:'EVACO '+n}));
+  }
+  return DATA.evaluations;
+}
+function evaluationsEdit(){
+  if(isAdmin() || !currentUser) return evaluations();
+  const pr = DATA.profils[currentUser.id] = DATA.profils[currentUser.id] || {};
+  if(!Array.isArray(pr.evaluations) || !pr.evaluations.length){
+    pr.evaluations = evaluations().map(e=>({id:e.id, nom:e.nom}));
+  }
+  return pr.evaluations;
+}
+function evalNumero(id){
+  const i = evaluations().findIndex(e=>e.id===id);
+  return i >= 0 ? i + 1 : '';
+}
+function evalNom(id){ const e = evaluations().find(x=>x.id===id); return e ? e.nom : id; }
+function dateKey(id){ return 'date' + id.charAt(0).toUpperCase() + id.slice(1); }
+function matById(id){ return DATA.matieres.find(m=>m.id===id); }
+function nomMat(id){ const m = matById(id); return m ? m.nom : id; }
+function baremeOf(id, periode){
+  const rep = repartitionDeClasse(classeCourante(), periode);
+  const v = rep && rep.baremes ? Number(rep.baremes[id]) : NaN;
+  if(!isNaN(v) && v>0) return v;
+  const m = matById(id);
+  const c = Number(m && m.bareme);
+  return (isNaN(c) || c<=0) ? 20 : c;
+}
+function classeCourante(){
+  return ((currentUser && DATA.profils[currentUser.id]) || {}).classe || 'Classe par défaut';
+}
+function repClasseLire(c){
+  const cle = Object.keys(DATA.repartitionClasse).find(k => normKey(k) === normKey(c));
+  const brut = cle !== undefined ? DATA.repartitionClasse[cle] : undefined;
+  const o = {general:''};
+  if(typeof brut === 'string') o.general = brut;
+  else if(brut && typeof brut === 'object') Object.keys(brut).forEach(k=>{ o[k] = brut[k] || ''; });
+  return o;
+}
+function repClasseEcrire(c, o){
+  const cle = Object.keys(DATA.repartitionClasse).find(k => normKey(k) === normKey(c)) || c;
+  const out = {};
+  Object.keys(o).forEach(k=>{ if(o[k]) out[k] = o[k]; });
+  if(!Object.keys(out).length){ delete DATA.repartitionClasse[cle]; return; }
+  DATA.repartitionClasse[cle] = out;
+}
+function repartitionDeClasse(classe, periode){
+  const o = repClasseLire(classe);
+  const id = (periode && o[periode]) || o.general;
+  return id ? (DATA.repartitions.find(r => r.id === id) || null) : null;
+}
+function matActives(periode){
+  const all = DATA.matieres.map(m=>m.id);
+  const rep = repartitionDeClasse(classeCourante(), periode);
+  if(!rep) return all;
+  const ids = all.filter(id=>rep.matieres.includes(id));
+  return ids.length ? ids : all;
+}
+function estAbsent(n){ return !!(n && n._abs); }
+function obsvOf(n, r){
+  if(estAbsent(n)) return 'Absent(e)';
+  return r ? appreciation(r.moy) : '—';
+}
+function calcEleve(n, periode){
+  if(!n) return null;
+  if(n._abs) return {total: 0, moy: 0};
+  let total = 0, pts = 0, any = false;
+  matActives(periode).forEach(m=>{
+    const v = n[m];
+    if(typeof v==='number' && !isNaN(v)){
+      total += Math.min(v, baremeOf(m, periode));
+      pts += baremeOf(m, periode);
+      any = true;
+    }
+  });
+  if(!any || pts===0) return null;
+  return {total: total, moy: total/pts*20};
+}
+function moyenneEleve(n, periode){
+  const r = calcEleve(n, periode);
+  return r ? r.moy : null;
+}
+function calcRangs(map){
+  const ids = Object.keys(map).filter(id=>map[id]!==null);
+  const key = id => Math.round(map[id]*100);
+  const res = {};
+  ids.forEach(id=>{
+    const sup = ids.filter(o=>key(o)>key(id)).length;
+    const ex = ids.some(o=>o!==id && key(o)===key(id));
+    res[id] = {rang: sup+1, ex: ex};
+  });
+  return res;
+}
+function rangLabel(r){
+  if(!r) return '—';
+  return (r.rang===1 ? '1er' : r.rang+'e') + (r.ex ? ' ex' : '');
+}
+function computeStats(notesPeriode, periode){
+  const calc = {}, moys = {};
+  DATA.eleves.forEach(el=>{
+    const r = calcEleve(notesPeriode[el.id], periode);
+    calc[el.id] = r;
+    moys[el.id] = (r && !estAbsent(notesPeriode[el.id])) ? r.moy : null;
+  });
+  return {calc: calc, rangs: calcRangs(moys)};
+}
+function appreciation(moy){
+  if(moy===null || moy===undefined) return '—';
+  if(moy>=16) return 'Excellent';
+  if(moy>=14) return 'Très bien';
+  if(moy>=12) return 'Bien';
+  if(moy>=10) return 'Passable';
+  if(moy>=8) return 'Insuffisant';
+  return 'Faible';
+}
+function fmt(v){ return (v===null || v===undefined || isNaN(v)) ? '—' : Number(v).toFixed(2); }
+function fmtBar(v){ return String(+Number(v).toFixed(2)); }
+
+/* =====================================================
+   ELEVES
+   ===================================================== */
+function genId(){ return 'e'+Date.now()+Math.random().toString(36).slice(2,7); }
+function p2(n){ return String(n).padStart(2,'0'); }
+function numOrBlank(v){ return (v===undefined || v===null || v==='') ? '' : Number(v); }
+
+function calcAge(iso){
+  if(!iso) return '';
+  const d = new Date(iso+'T00:00:00');
+  if(isNaN(d)) return '';
+  const t = new Date();
+  let a = t.getFullYear() - d.getFullYear();
+  const m = t.getMonth() - d.getMonth();
+  if(m<0 || (m===0 && t.getDate()<d.getDate())) a--;
+  return a<0 ? '' : a;
+}
+function majAge(){
+  const a = calcAge($('el-naissance').value);
+  $('el-age').value = a==='' ? '' : a+(a>1?' ans':' an');
+}
+$('el-naissance').addEventListener('input', majAge);
+$('el-naissance').addEventListener('change', majAge);
+
+// Checkbox Extrait : grise le N° de l'extrait (« Sans extrait ») ou le déverrouille
+function majChampExtrait(){
+  const on = $('el-extrait').checked;
+  const f = $('el-num-extrait');
+  f.disabled = !on;
+  if(on){
+    if(f.value === 'Sans extrait') f.value = '';
+  }else{
+    f.value = 'Sans extrait';
+  }
+}
+$('el-extrait').addEventListener('change', majChampExtrait);
+
+let selectedEleveId = null;
+
+function matchEleve(el, q){
+  return normTxt(el.nom+' '+(el.prenoms||'')+' '+(el.matricule||'')+' '+(el.numExtrait||'')).includes(q);
+}
+function clearFormEleve(){
+  ['el-nom','el-prenoms','el-matricule','el-naissance','el-age','el-scol-classe','el-scol-total','el-num-extrait'].forEach(id=>{
+    $(id).value = '';
+  });
+  $('el-sexe').value = 'M';
+  $('el-extrait').checked = false;
+  majChampExtrait();
+}
+function fillFormEleve(el){
+  $('el-nom').value = el.nom || '';
+  $('el-prenoms').value = el.prenoms || '';
+  $('el-sexe').value = el.sexe==='F' ? 'F' : 'M';
+  $('el-matricule').value = el.matricule || '';
+  $('el-naissance').value = el.dateNaissance || '';
+  $('el-scol-classe').value = numOrBlank(el.scolClasse);
+  $('el-scol-total').value = numOrBlank(el.totalScol);
+  $('el-extrait').checked = !!el.extrait;
+  $('el-num-extrait').value = el.numExtrait || '';
+  majChampExtrait();
+  majAge();
+}
+function majBanner(){
+  const bn = $('edit-banner');
+  const el = DATA.eleves.find(x=>x.id===selectedEleveId);
+  if(el){
+    bn.textContent = 'Élève affiché : ' + el.nom + ' ' + (el.prenoms||'') + ' — modifiez puis cliquez sur « Modifier ».';
+    bn.style.display = 'block';
+  }else{
+    bn.style.display = 'none';
+  }
+}
+function selectEleve(id){
+  const el = DATA.eleves.find(x=>x.id===id);
+  if(!el) return;
+  selectedEleveId = id;
+  fillFormEleve(el);
+  majBanner();
+}
+function resetSelectionEleve(){
+  selectedEleveId = null;
+  clearFormEleve();
+  $('search-eleves').value = '';
+  majBanner();
+}
+function lireFormEleve(){
+  const nom = $('el-nom').value.trim();
+  const prenoms = $('el-prenoms').value.trim();
+  const sexe = $('el-sexe').value;
+  const matricule = $('el-matricule').value.trim();
+  const dateNaissance = $('el-naissance').value;
+  const scRaw = $('el-scol-classe').value.trim();
+  const tsRaw = $('el-scol-total').value.trim();
+  const extrait = $('el-extrait').checked;
+  const numExtrait = extrait ? $('el-num-extrait').value.trim() : '';
+  if(!nom){ toast('Le nom est obligatoire'); return null; }
+  const scolClasse = scRaw==='' ? '' : Math.max(0, Number(scRaw));
+  const totalScol = tsRaw==='' ? '' : Math.max(0, Number(tsRaw));
+  if(scolClasse!=='' && totalScol!=='' && scolClasse>totalScol){
+    toast('La scolarité en classe ≤ total'); return null;
+  }
+  return {nom, prenoms, sexe, matricule, dateNaissance, scolClasse, totalScol, extrait, numExtrait};
+}
+
+$('search-eleves').addEventListener('input', ()=>{
+  const q = normTxt($('search-eleves').value);
+  if(q){
+    const trouves = DATA.eleves.filter(el=>matchEleve(el, q));
+    if(trouves.length){
+      selectEleve(trouves[0].id);
+    }else if(selectedEleveId){
+      selectedEleveId = null;
+      clearFormEleve();
+      majBanner();
+    }
+  }
+  renderElevesTable();
+});
+
+$('btn-add-eleve').addEventListener('click', ()=>{
+  const f = lireFormEleve();
+  if(!f) return;
+  const dup = DATA.eleves.some(x=>
+    (f.matricule && x.matricule===f.matricule) ||
+    (normKey(x.nom)===normKey(f.nom) && normKey(x.prenoms)===normKey(f.prenoms) && (x.dateNaissance||'')===(f.dateNaissance||''))
+  );
+  if(dup){ toast('Élève déjà existant'); return; }
+  DATA.eleves.push(Object.assign({id:genId()}, f));
+  saveData();
+  resetSelectionEleve();
+  renderElevesTable();
+  refreshClasseSelect();
+  toast('Élève ajouté');
+});
+
+$('btn-modif-eleve').addEventListener('click', ()=>{
+  const el = DATA.eleves.find(x=>x.id===selectedEleveId);
+  if(!el){ toast('Sélectionnez un élève'); return; }
+  const f = lireFormEleve();
+  if(!f) return;
+  Object.assign(el, f);
+  saveData();
+  majBanner();
+  renderElevesTable();
+  renderNotesTable();
+  toast('Élève modifié');
+});
+
+$('btn-annuler-eleve').addEventListener('click', ()=>{
+  resetSelectionEleve();
+  renderElevesTable();
+  toast('Annulé');
+});
+
+function supprimerEleve(id){
+  DATA.eleves = DATA.eleves.filter(x=>x.id!==id);
+  Object.keys(DATA.notes).forEach(cl=>{
+    Object.keys(DATA.notes[cl]||{}).forEach(pe=>{
+      if(DATA.notes[cl][pe]) delete DATA.notes[cl][pe][id];
+    });
+  });
+  resetSelectionEleve();
+  saveData();
+  renderElevesTable();
+  refreshClasseSelect();
+  renderNotesTable();
+}
+
+$('btn-suppr-eleve').addEventListener('click', ()=>{
+  const el = DATA.eleves.find(x=>x.id===selectedEleveId);
+  if(!el){ toast('Sélectionnez un élève'); return; }
+  confirmAction('Supprimer', `Supprimer ${el.nom} ${el.prenoms||''} et ses notes ?`, ()=>{
+    supprimerEleve(el.id);
+    toast('Élève supprimé');
+  });
+});
+
+$('btn-vider-eleves').addEventListener('click', ()=>{
+  if(DATA.eleves.length===0){ toast('Liste déjà vide'); return; }
+  confirmAction('Vider la base', `Supprimer les ${DATA.eleves.length} élève(s) et toutes les notes ?`, ()=>{
+    DATA.eleves = [];
+    DATA.notes = {};
+    resetSelectionEleve();
+    saveData();
+    renderElevesTable();
+    refreshClasseSelect();
+    renderNotesTable();
+    toast('Base vidée');
+  });
+});
+
+const LISTES = [
+  {k:'generale', titre:'Liste générale des élèves', f:()=>true},
+  {k:'filles', titre:'Liste des filles', f:e=>e.sexe==='F'},
+  {k:'garcons', titre:'Liste des garçons', f:e=>e.sexe==='M'},
+  {k:'redoublants', titre:'Liste des redoublants', f:e=>Number(e.scolClasse)>1},
+  {k:'sans', titre:'Liste des élèves sans extrait', f:e=>!e.extrait},
+  {k:'avec', titre:'Liste des élèves avec extrait', f:e=>!!e.extrait}
+];
+let listeCourante = 'generale';
+function passeListe(el){
+  const l = LISTES.find(x=>x.k===listeCourante);
+  return !l || l.f(el);
+}
+$('liste-tabs').addEventListener('click', e=>{
+  const b = e.target.closest('button');
+  if(!b) return;
+  document.querySelectorAll('#liste-tabs button').forEach(x=>x.classList.toggle('active', x===b));
+  listeCourante = b.dataset.liste;
+  renderElevesTable();
+});
+
+function htmlLignesEffectifs(){
+  const ligne = (label, liste, gras) => {
+    const n = liste.length;
+    const red = liste.filter(e=>Number(e.scolClasse)>1).length;
+    const av = liste.filter(e=>e.extrait).length;
+    const v = x => gras ? `<strong>${x}</strong>` : x;
+    return `<tr><td class="nom">${v(label)}</td><td>${v(n)}</td><td>${v(red)}</td><td>${v(av)}</td><td>${v(n-av)}</td></tr>`;
+  };
+  return ligne('Garçons', DATA.eleves.filter(e=>e.sexe==='M'), false)
+    + ligne('Filles', DATA.eleves.filter(e=>e.sexe==='F'), false)
+    + ligne('Total', DATA.eleves, true);
+}
+function renderEffectifs(){
+  const tb = document.querySelector('#table-effectifs tbody');
+  if(tb) tb.innerHTML = htmlLignesEffectifs();
+}
+
+function enteteDocument(p, centreHtml){
+  const logoCI = p.logoCI ? `<img class="logo-entete" src="${p.logoCI}" alt="CI"/>` : '';
+  const logoEcole = p.logoEcole ? `<img class="logo-entete" src="${p.logoEcole}" alt="École"/>` : '';
+  return `
+    <div class="entete">
+      <div class="col">
+        ${blocsEntete(p)}
+        ${logoEcole}
+      </div>
+      <div class="centre">${centreHtml}</div>
+      <div class="col">
+        <div class="rep">${escapeHtml(p.republique||'')}</div>
+        ${logoCI}
+        ${p.devise?`<div class="devise">${escapeHtml(p.devise)}</div>`:''}
+        <div style="margin-top:4px"><strong>Année scolaire :</strong> ${escapeHtml(p.anneeScolaire||'……………')}</div>
+      </div>
+    </div>`;
+}
+
+function htmlListe(){
+  const p = effP();
+  const liste = LISTES.find(x=>x.k===listeCourante) || LISTES[0];
+  const eleves = DATA.eleves.filter(e=>liste.f(e));
+  const nG = eleves.filter(e=>e.sexe==='M').length;
+  const nF = eleves.filter(e=>e.sexe==='F').length;
+  const effectifs = `<div style="text-align:center;font-size:11pt;line-height:1.5;margin-top:6px">G : ${nG}<br>F : ${nF}<br>T : ${eleves.length}</div>`;
+  let html = enteteDocument(p, '') + `<div class="titre-feuille">${escapeHtml(liste.titre)}</div>` + effectifs;
+  if(!eleves.length){
+    return html + '<p style="text-align:center;font-style:italic;font-size:10px">Aucun élève dans cette liste.</p>';
+  }
+  html += '<table><thead><tr><th>N°</th><th>Nom &amp; Prénoms</th><th>Sexe</th><th>Matricule</th><th>Date de naissance</th><th>Scol. en classe</th><th>Total scol.</th><th>Extrait</th><th>N° extrait</th></tr></thead><tbody>';
+  eleves.forEach((el,i)=>{
+    html += `<tr><td>${i+1}</td><td class="nm">${escapeHtml(el.nom)} ${escapeHtml(el.prenoms||'')}</td>`
+      + `<td>${escapeHtml(el.sexe||'')}</td><td>${escapeHtml(el.matricule||'')}</td>`
+      + `<td>${el.dateNaissance ? formatDateFr(el.dateNaissance) : ''}</td>`
+      + `<td>${escapeHtml(numOrBlank(el.scolClasse))}</td><td>${escapeHtml(numOrBlank(el.totalScol))}</td>`
+      + `<td>${el.extrait ? 'Oui' : 'Non'}</td>`
+      + `<td>${escapeHtml(el.extrait ? (el.numExtrait||'') : 'Sans extrait')}</td></tr>`;
+  });
+  return html + '</tbody></table>';
+}
+
+function htmlStats(){
+  const p = effP();
+  const centre = `<div><strong>Classe :</strong> ${escapeHtml(p.classe||'—')}</div>
+    <div class="compo">Statistiques des effectifs</div>
+    <div class="compo">Effectif total : ${DATA.eleves.length}</div>`;
+  return enteteDocument(p, centre) + '<div class="titre-feuille">Statistiques des effectifs</div>'
+    + '<table><thead><tr><th>Sexe</th><th>Effectif</th><th>Redoublants</th><th>Avec extrait</th><th>Sans extrait</th></tr></thead><tbody>'
+    + htmlLignesEffectifs() + '</tbody></table>';
+}
+
+function renderListePreview(){
+  const z = $('liste-render');
+  if(z) z.innerHTML = htmlListe();
+}
+function renderStatsPreview(){
+  const z = $('stats-render');
+  if(z) z.innerHTML = htmlStats();
+}
+
+// Reprend toutes les règles .pdf-preview de l'interface (couleurs des cases, tableaux du bas, signatures…)
+// pour que l'impression ressemble à la prévisualisation affichée à l'écran
+function cssApercu(){
+  let css = '';
+  Array.from(document.styleSheets).forEach(feuille=>{
+    let regles;
+    try{ regles = feuille.cssRules; }catch(e){ return; }
+    Array.from(regles).forEach(r=>{
+      if(r.type !== 1 || !r.selectorText) return;
+      const sel = r.selectorText.trim();
+      if(!sel.startsWith('.pdf-preview') || sel === '.pdf-preview') return;
+      css += r.cssText.replace(/\.pdf-preview\s+/g,'') + '\n';
+    });
+  });
+  return css;
+}
+function documentComplet(contenu, titre){
+  const css = cssApercu();
+  return `<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><title>${escapeHtml(titre)}</title>
+    <style>
+      @page{size:A4 portrait;margin:0}
+      body{font-family:"Times New Roman",Georgia,serif;color:#000;margin:0;padding:10mm}
+      *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+      ${css}
+    </style></head><body>${contenu}</body></html>`;
+}
+function imprimerDocument(contenu, titre){
+  const w = window.open('', '_blank');
+  if(!w){ toast('Autorisez les pop-ups'); return; }
+  w.document.write(documentComplet(contenu, titre));
+  w.document.close();
+  w.focus();
+  setTimeout(()=>{ w.print(); }, 400);
+}
+function preparerZonePDF(contenu){
+  // Le document est construit à la largeur utile d'un A4 ; s'il déborde (tableaux larges),
+  // la zone est élargie à la largeur réelle : html2pdf réduit ensuite l'ensemble pour tenir sur la page.
+  const outer = document.createElement('div');
+  outer.style.cssText = 'position:absolute;left:0;top:0;background:#fff;z-index:99999;margin:0;padding:0';
+  const inner = document.createElement('div');
+  inner.className = 'pdf-preview';
+  inner.style.cssText = 'width:190mm;max-width:none;margin:0;padding:0;border:0;background:#fff';
+  inner.innerHTML = contenu;
+  outer.appendChild(inner);
+  document.body.appendChild(outer);
+  const base = inner.getBoundingClientRect();
+  let droite = base.width;
+  inner.querySelectorAll('*').forEach(el=>{
+    const r = el.getBoundingClientRect();
+    if(r.width) droite = Math.max(droite, r.right - base.left);
+  });
+  outer.style.width = Math.ceil(droite) + 'px';
+  return outer;
+}
+function telechargerPDF(contenu, nomFichier){
+  if(typeof html2pdf === 'undefined'){
+    toast('Bibliothèque PDF indisponible (vérifiez la connexion internet)');
+    return;
+  }
+  toast('Préparation du PDF…');
+  // La page doit être remontée en haut : html2canvas capture mal une zone située hors de la fenêtre visible
+  window.scrollTo(0, 0);
+  const zone = preparerZonePDF(contenu);
+  const images = Array.from(zone.querySelectorAll('img'));
+  const attendreImages = Promise.all(images.map(img => img.complete
+    ? Promise.resolve()
+    : new Promise(r => { img.onload = img.onerror = r; })));
+  attendreImages
+    .then(() => new Promise(r => setTimeout(r, 250)))
+    .then(() => {
+      const largeur = Math.ceil(zone.offsetWidth) + 40;
+      const hauteur = Math.ceil(zone.scrollHeight) + 40;
+      return html2pdf().set({
+        margin: 10,
+        filename: nomFichier + '.pdf',
+        image: {type:'jpeg', quality:0.95},
+        html2canvas: {scale:2, useCORS:true, backgroundColor:'#ffffff', scrollX:0, scrollY:0, x:0, y:0, windowWidth:largeur, windowHeight:hauteur},
+        jsPDF: {unit:'mm', format:'a4', orientation:'portrait'},
+        pagebreak: {mode:['css','legacy']}
+      }).from(zone).save();
+    })
+    .then(() => { zone.remove(); toast('PDF téléchargé'); })
+    .catch(err => { console.error(err); zone.remove(); toast('Échec de la création du PDF'); });
+}
+function nomFichierBase(){
+  return (effP().classe || 'classe').replace(/[^a-zA-Z0-9]+/g,'_');
+}
+function nomFichierListe(){
+  const liste = LISTES.find(x=>x.k===listeCourante) || LISTES[0];
+  return 'Liste_' + liste.k + '_' + nomFichierBase();
+}
+
+$('btn-imprimer-liste').addEventListener('click', ()=>{
+  const liste = LISTES.find(x=>x.k===listeCourante) || LISTES[0];
+  imprimerDocument(htmlListe(), liste.titre);
+});
+$('btn-imprimer-stats').addEventListener('click', ()=>imprimerDocument(htmlStats(), 'Statistiques des effectifs'));
+
+function renderElevesTable(){
+  renderEffectifs();
+  renderListePreview();
+  renderStatsPreview();
+  renderAlphaPreview();
+  renderRecapPreview();
+  document.querySelectorAll('.table-eleves tbody').forEach(remplirTableEleves);
+}
+
+function remplirTableEleves(tb){
+  const dansListes = !!tb.closest('#sec-listes');
+  tb.innerHTML = '';
+  if(DATA.eleves.length===0){
+    tb.innerHTML = '<tr><td colspan="10" style="padding:16px;color:#8a95a3;cursor:default">Aucun élève enregistré.</td></tr>';
+    return;
+  }
+  const q = normTxt($('search-eleves').value);
+  let affiches = 0;
+  DATA.eleves.forEach(el=>{
+    if(q && !matchEleve(el, q)) return;
+    if(dansListes && !passeListe(el)) return;
+    affiches++;
+    const tr = document.createElement('tr');
+    tr.dataset.id = el.id;
+    if(el.id===selectedEleveId) tr.classList.add('sel');
+    tr.innerHTML = `
+      <td>${affiches}</td>
+      <td class="nom">${escapeHtml(el.nom)}</td>
+      <td>${escapeHtml(el.prenoms||'')}</td>
+      <td>${escapeHtml(el.sexe||'')}</td>
+      <td>${escapeHtml(el.matricule||'')}</td>
+      <td>${el.dateNaissance ? formatDateFr(el.dateNaissance) : ''}</td>
+      <td>${escapeHtml(numOrBlank(el.scolClasse))}</td>
+      <td>${escapeHtml(numOrBlank(el.totalScol))}</td>
+      <td>${el.extrait ? 'Oui' : 'Non'}</td>
+      <td>${escapeHtml(el.extrait ? (el.numExtrait||'') : 'Sans extrait')}</td>
+    `;
+    tr.addEventListener('click', ()=>{
+      selectEleve(el.id);
+      if(document.getElementById('sec-eleves').classList.contains('active')){
+        renderElevesTable();
+      }else{
+        document.querySelector('nav.tabbar button[data-tab="eleves"]').click();
+      }
+    });
+    tb.appendChild(tr);
+  });
+  if(affiches===0){
+    tb.innerHTML = '<tr><td colspan="10" style="padding:16px;color:#8a95a3;cursor:default">Aucun élève ne correspond.</td></tr>';
+  }
+}
+
+/* ---------- Import / Export ---------- */
+const EL_HEADERS = ['Nom','Prénoms','Sexe','Matricule','Date de naissance','Scolarité en classe','Total scolarité','Extrait','N° extrait'];
+const COL_ALIASES = {
+  nom: ['nom'],
+  prenoms: ['prenoms','prenom'],
+  sexe: ['sexe','genre'],
+  matricule: ['matricule','ndinscription','numinscription','ninscription'],
+  dateNaissance: ['datedenaissance','datenaissance','naissance','nele','nelee'],
+  scolClasse: ['scolariteenclasse','scolariteclasse'],
+  totalScol: ['totalscolarite','scolaritetotale'],
+  extrait: ['extrait','extraitoui','extraitnon'],
+  numExtrait: ['noextrait','numextrait','numerodeltraita','numerodeltrait','numextrait']
+};
+function normTxt(s){
+  return String(s===undefined||s===null?'':s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\s+/g,' ').trim();
+}
+function normKey(s){
+  return String(s===undefined||s===null?'':s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');
+}
+function downloadBlob(blob, filename){
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click();
+  setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); }, 500);
+}
+
+$('btn-export-eleves').addEventListener('click', ()=>{
+  const rows = DATA.eleves.map(e=>[
+    e.nom, e.prenoms||'', e.sexe||'', e.matricule||'',
+    e.dateNaissance ? formatDateFr(e.dateNaissance) : '',
+    numOrBlank(e.scolClasse), numOrBlank(e.totalScol),
+    e.extrait ? 'Oui' : 'Non', e.numExtrait||''
+  ]);
+  const aoa = [EL_HEADERS].concat(rows);
+  if(typeof XLSX!=='undefined'){
+    const ws = XLSX.utils.aoa_to_sheet(aoa);
+    ws['!cols'] = [{wch:22},{wch:26},{wch:7},{wch:14},{wch:18},{wch:20},{wch:16},{wch:8},{wch:16}];
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Eleves');
+    XLSX.writeFile(wb, 'eleves_EtatNotes.xlsx');
+    toast('Export Excel terminé');
+  }else{
+    const csv = '\ufeff' + aoa.map(r=>r.map(c=>{
+      const s = String(c);
+      return /[";\n]/.test(s) ? '"'+s.replace(/"/g,'""')+'"' : s;
+    }).join(';')).join('\r\n');
+    downloadBlob(new Blob([csv],{type:'text/csv;charset=utf-8'}), 'eleves_EtatNotes.csv');
+    toast('Export CSV terminé');
+  }
+});
+
+$('btn-import-eleves').addEventListener('click', ()=>{
+  $('file-import-eleves').click();
+});
+
+$('file-import-eleves').addEventListener('change', async e=>{
+  const f = e.target.files[0];
+  e.target.value = '';
+  if(!f) return;
+  try{
+    let rows;
+    if(/\.(csv|txt)$/i.test(f.name)){
+      const buf = await f.arrayBuffer();
+      let txt;
+      try{ txt = new TextDecoder('utf-8',{fatal:true}).decode(buf); }
+      catch(err){ txt = new TextDecoder('windows-1252').decode(buf); }
+      rows = parseCSV(txt);
+    }else{
+      if(typeof XLSX==='undefined'){ toast('Bibliothèque Excel indisponible'); return; }
+      const buf = await f.arrayBuffer();
+      const wb = XLSX.read(buf, {type:'array'});
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      rows = XLSX.utils.sheet_to_json(ws, {header:1, defval:'', raw:true});
+    }
+    importRows(rows);
+  }catch(err){
+    console.error(err);
+    toast('Fichier illisible');
+  }
+});
+
+function parseCSV(text){
+  text = text.replace(/^\ufeff/,'');
+  const first = text.split(/\r?\n/)[0] || '';
+  const delim = (first.match(/;/g)||[]).length >= (first.match(/,/g)||[]).length ? ';' : ',';
+  const rows = [];
+  let row = [], cur = '', q = false;
+  for(let i=0;i<text.length;i++){
+    const c = text[i];
+    if(q){
+      if(c==='"'){
+        if(text[i+1]==='"'){ cur += '"'; i++; } else q = false;
+      }else cur += c;
+    }else if(c==='"') q = true;
+    else if(c===delim){ row.push(cur); cur = ''; }
+    else if(c==='\n'){ row.push(cur); rows.push(row); row = []; cur = ''; }
+    else if(c!=='\r') cur += c;
+  }
+  if(cur!=='' || row.length){ row.push(cur); rows.push(row); }
+  return rows;
+}
+
+function toISODate(v){
+  if(v===''||v===null||v===undefined) return '';
+  if(v instanceof Date && !isNaN(v)) return v.getFullYear()+'-'+p2(v.getMonth()+1)+'-'+p2(v.getDate());
+  if(typeof v==='number'){
+    if(v<1) return '';
+    const d = new Date(Math.round((v-25569)*86400000));
+    return d.getUTCFullYear()+'-'+p2(d.getUTCMonth()+1)+'-'+p2(d.getUTCDate());
+  }
+  const s = String(v).trim();
+  let m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+  if(m) return m[1]+'-'+p2(m[2])+'-'+p2(m[3]);
+  m = s.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})$/);
+  if(m){
+    let y = Number(m[3]);
+    if(y<100) y += (y<=40 ? 2000 : 1900);
+    return y+'-'+p2(m[2])+'-'+p2(m[1]);
+  }
+  return '';
+}
+
+function toNumField(v){
+  if(v===''||v===null||v===undefined) return '';
+  const n = parseFloat(String(v).replace(',','.'));
+  return isNaN(n) ? '' : Math.max(0, n);
+}
+
+function normSexe(v){
+  const k = normKey(v);
+  if(['f','feminin','fille'].includes(k)) return 'F';
+  if(['m','masculin','garcon'].includes(k)) return 'M';
+  return '';
+}
+
+function normBool(v){
+  const k = normKey(v);
+  if(['oui','o','yes','y','1','true','vrai'].includes(k)) return true;
+  return false;
+}
+
+function importRows(rows){
+  rows = rows.filter(r=>r.some(c=>String(c).trim()!==''));
+  if(rows.length<2){ toast('Fichier vide'); return; }
+  const head = rows[0].map(normKey);
+  const idx = {};
+  Object.keys(COL_ALIASES).forEach(k=>{
+    idx[k] = head.findIndex(h=>COL_ALIASES[k].includes(h));
+  });
+  if(idx.nom<0){ toast('Colonne « Nom » introuvable'); return; }
+
+  let ajoutes = 0, ignores = 0;
+  rows.slice(1).forEach(r=>{
+    const get = k => idx[k]>=0 ? r[idx[k]] : '';
+    const nom = String(get('nom')).trim();
+    if(!nom){ ignores++; return; }
+    const prenoms = String(get('prenoms')).trim();
+    const matricule = String(get('matricule')).trim();
+    const dateNaissance = toISODate(get('dateNaissance'));
+    const dup = DATA.eleves.some(x=>
+      matricule
+        ? x.matricule===matricule
+        : (normKey(x.nom)===normKey(nom) && normKey(x.prenoms)===normKey(prenoms) && (x.dateNaissance||'')===dateNaissance)
+    );
+    if(dup){ ignores++; return; }
+    const extrait = normBool(get('extrait'));
+    const numExtrait = extrait ? String(get('numExtrait')).trim() : '';
+    DATA.eleves.push({
+      id: genId(), nom, prenoms,
+      sexe: normSexe(get('sexe')),
+      matricule, dateNaissance,
+      scolClasse: toNumField(get('scolClasse')),
+      totalScol: toNumField(get('totalScol')),
+      extrait, numExtrait
+    });
+    ajoutes++;
+  });
+  saveData();
+  renderElevesTable();
+  refreshClasseSelect();
+  toast(ajoutes+' élève(s) importé(s)'+(ignores?' – '+ignores+' ignoré(s)':''));
+}
+
+/* =====================================================
+   SAISIE NOTES
+   ===================================================== */
+function refreshClasseSelect(){
+  const sel = $('saisie-classe');
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">-- Choisir --</option>';
+  const classe = classeCourante();
+  const opt = document.createElement('option');
+  opt.value = classe;
+  opt.textContent = classe;
+  sel.appendChild(opt);
+  if(cur) sel.value = cur;
+}
+
+function chargerNotes(silencieux){
+  const classe = $('saisie-classe').value;
+  const periode = $('saisie-periode').value;
+  if(!classe){ if(!silencieux) toast('Sélectionnez une classe'); return; }
+  if(DATA.eleves.length===0){ if(!silencieux) toast('Ajoutez d\'abord des élèves'); return; }
+  currentClasseNotes = classe;
+  currentPeriodeNotes = periode;
+  renderNotesTable();
+}
+$('btn-charger-eleves').addEventListener('click', ()=>chargerNotes(false));
+$('saisie-periode').addEventListener('change', ()=>chargerNotes(true));
+$('saisie-classe').addEventListener('change', ()=>chargerNotes(true));
+
+function appliquerFiltreNotes(){
+  const q = normTxt($('search-notes').value);
+  let visibles = 0;
+  document.querySelectorAll('#zone-notes tr[data-row]').forEach(tr=>{
+    const ok = !q || (tr.dataset.name||'').includes(q);
+    tr.style.display = ok ? '' : 'none';
+    if(ok) visibles++;
+  });
+  const msg = $('msg-notes-vide');
+  if(msg) msg.style.display = (q && visibles===0) ? 'block' : 'none';
+}
+$('search-notes').addEventListener('input', appliquerFiltreNotes);
+
+function ensureNotes(classe, periode){
+  if(!DATA.notes[classe]) DATA.notes[classe] = {};
+  if(!DATA.notes[classe][periode]) DATA.notes[classe][periode] = {};
+  return DATA.notes[classe][periode];
+}
+
+function renderNotesTable(){
+  const zone = $('zone-notes');
+  if(!currentClasseNotes || DATA.eleves.length===0){
+    zone.innerHTML = '<p class="hint">Sélectionnez une classe puis cliquez sur « Charger les élèves ».</p>';
+    return;
+  }
+  const notesClasse = ensureNotes(currentClasseNotes, currentPeriodeNotes);
+  const st = computeStats(notesClasse, currentPeriodeNotes);
+
+  const repCourante = repartitionDeClasse(classeCourante(), currentPeriodeNotes);
+  let html = `<p class="hint" style="margin:0 0 8px">Répartition : <strong>${escapeHtml(repCourante ? repCourante.nom : 'toutes les matières (aucune répartition pour cette classe)')}</strong></p>` + '<div class="table-notes-wrap"><table class="notes saisie"><thead><tr><th>Élève</th><th>ABS</th>';
+  matActives(currentPeriodeNotes).forEach(m=>{ html += `<th>${escapeHtml(nomMat(m))}<small>/ ${fmtBar(baremeOf(m, currentPeriodeNotes))}</small></th>`; });
+  html += '<th>TOTAL</th><th>MOYENNE</th><th>RANG</th><th>OBSV</th></tr></thead><tbody>';
+  DATA.eleves.forEach(el=>{
+    const n = notesClasse[el.id] || {};
+    const abs = estAbsent(n);
+    const r = st.calc[el.id];
+    html += `<tr data-row="${el.id}" data-name="${escapeHtml(normTxt(el.nom+' '+(el.prenoms||'')))}"><td class="nom">${escapeHtml(el.nom)} ${escapeHtml(el.prenoms||'')}</td>`;
+    html += `<td><input type="checkbox" class="abs-chk" data-abs="${el.id}" ${abs?'checked':''}/></td>`;
+    matActives(currentPeriodeNotes).forEach(m=>{
+      const val = abs ? 0 : (n[m] !== undefined ? n[m] : '');
+      html += `<td><input type="number" min="0" max="${baremeOf(m, currentPeriodeNotes)}" step="0.25" data-eleve="${el.id}" data-matiere="${escapeHtml(m)}" value="${val}" placeholder="—" ${abs?'disabled':''}/></td>`;
+    });
+    html += `<td class="calc" data-c="total">${r?fmt(r.total):'—'}</td>`;
+    html += `<td class="calc" data-c="moy">${r?fmt(r.moy):'—'}</td>`;
+    html += `<td class="calc" data-c="rang">${rangLabel(st.rangs[el.id])}</td>`;
+    html += `<td class="calc" data-c="obsv">${obsvOf(n, r)}</td></tr>`;
+  });
+  html += '</tbody></table></div>';
+  html += '<p class="hint" id="msg-notes-vide" style="display:none">Aucun élève ne correspond.</p>';
+  zone.innerHTML = html;
+  appliquerFiltreNotes();
+
+  zone.querySelectorAll('input[data-eleve]').forEach(inp=>{
+    inp.addEventListener('change', ()=>{
+      const id = inp.dataset.eleve;
+      const mat = inp.dataset.matiere;
+      let v = inp.value.trim();
+      if(v===''){
+        if(notesClasse[id]) delete notesClasse[id][mat];
+      }else{
+        const precedente = (notesClasse[id] && notesClasse[id][mat] !== undefined) ? notesClasse[id][mat] : '';
+        const eleveNom = (inp.closest('tr') && inp.closest('tr').querySelector('td.nom')) ? inp.closest('tr').querySelector('td.nom').textContent.trim() : '';
+        const matNom = nomMat(mat);
+        const max = baremeOf(mat, currentPeriodeNotes);
+        const saisie = parseFloat(v);
+        if(isNaN(saisie)){
+          dialogueErreur(`La note de ${eleveNom} en ${matNom} n'est pas un nombre. Corrigez la note.`, 'Note invalide');
+          inp.value = precedente; inp.focus(); return;
+        }
+        if(saisie < 0){
+          dialogueErreur(`La note de ${eleveNom} en ${matNom} ne peut pas être négative. Corrigez la note.`, 'Note invalide');
+          inp.value = precedente; inp.focus(); return;
+        }
+        if(saisie > max){
+          dialogueErreur(`La note de ${eleveNom} en ${matNom} (${saisie}) dépasse le total de la matière (${max} points). Corrigez la note.`, 'Note trop élevée');
+          inp.value = precedente; inp.focus(); return;
+        }
+        v = saisie;
+        inp.value = v;
+        if(!notesClasse[id]) notesClasse[id] = {};
+        notesClasse[id][mat] = v;
+      }
+      refreshComputed(notesClasse);
+    });
+  });
+
+  zone.querySelectorAll('input[data-abs]').forEach(chk=>{
+    chk.addEventListener('change', ()=>{
+      const id = chk.dataset.abs;
+      if(!notesClasse[id]) notesClasse[id] = {};
+      const n = notesClasse[id];
+      if(chk.checked){
+        const bak = {};
+        matActives(currentPeriodeNotes).forEach(m=>{ if(n[m]!==undefined) bak[m] = n[m]; n[m] = 0; });
+        n._bak = bak;
+        n._abs = true;
+      }else{
+        if(n._bak){
+          matActives(currentPeriodeNotes).forEach(m=>{ delete n[m]; });
+          Object.keys(n._bak).forEach(m=>{ n[m] = n._bak[m]; });
+        }
+        delete n._bak;
+        delete n._abs;
+      }
+      chk.closest('tr').querySelectorAll('input[data-eleve]').forEach(i=>{
+        i.disabled = chk.checked;
+        const v = n[i.dataset.matiere];
+        i.value = (v===undefined) ? '' : v;
+      });
+      refreshComputed(notesClasse);
+    });
+  });
+}
+
+function refreshComputed(notesClasse){
+  const st = computeStats(notesClasse, currentPeriodeNotes);
+  document.querySelectorAll('#zone-notes tr[data-row]').forEach(tr=>{
+    const id = tr.dataset.row;
+    const r = st.calc[id];
+    tr.querySelector('[data-c="total"]').textContent = r ? fmt(r.total) : '—';
+    tr.querySelector('[data-c="moy"]').textContent = r ? fmt(r.moy) : '—';
+    tr.querySelector('[data-c="rang"]').textContent = rangLabel(st.rangs[id]);
+    tr.querySelector('[data-c="obsv"]').textContent = obsvOf(notesClasse[id], r);
+  });
+}
+
+$('btn-reset-notes').addEventListener('click', ()=>{
+  const classe = $('saisie-classe').value;
+  const periode = $('saisie-periode').value;
+  if(!classe){ toast('Sélectionnez une classe'); return; }
+  const lib = evalNom(periode);
+  confirmAction('Réinitialiser les notes',
+    `Effacer toutes les notes et absences de ${lib} pour « ${classe} » ?`,
+    ()=>{
+      if(!DATA.notes[classe]) DATA.notes[classe] = {};
+      DATA.notes[classe][periode] = {};
+      saveData();
+      if(currentClasseNotes) renderNotesTable();
+      toast('Notes effacées');
+    });
+});
+
+$('btn-save-notes').addEventListener('click', ()=>{
+  if(!currentClasseNotes){ toast('Chargez d\'abord les élèves'); return; }
+  saveData();
+  toast('Notes enregistrées');
+});
+
+/* =====================================================
+   PDF
+   ===================================================== */
+$('feuille-tabs').addEventListener('click', e=>{
+  const b = e.target.closest('button');
+  if(!b) return;
+  document.querySelectorAll('#feuille-tabs button').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');
+  currentFeuille = b.dataset.f;
+  renderPDF();
+});
+
+function notesPeriode(pe){
+  const classe = classeCourante();
+  return (DATA.notes[classe] && DATA.notes[classe][pe]) || {};
+}
+
+function itemsEvaco(nPer){
+  const nc = notesPeriode(nPer);
+  const st = computeStats(nc, nPer);
+  return DATA.eleves.map(el=>{
+    const abs = estAbsent(nc[el.id]);
+    const r = st.calc[el.id];
+    return {sexe: el.sexe, present: !abs, admis: !abs && !!r && Math.round(r.moy*100)>=1000};
+  });
+}
+
+function mgaData(){
+  const periodes = evaluations().map(e=>e.id);
+  const moysParPeriode = periodes.map(pe=>{
+    const nc = notesPeriode(pe);
+    const m = {};
+    DATA.eleves.forEach(el=>{ m[el.id] = moyenneEleve(nc[el.id] || null, pe); });
+    return m;
+  });
+  const mga = {}, absAll = {};
+  DATA.eleves.forEach(el=>{
+    const vs = moysParPeriode.map(m=>m[el.id]).filter(v=>v!==null);
+    mga[el.id] = vs.length ? vs.reduce((a,b)=>a+b,0)/vs.length : null;
+    absAll[el.id] = periodes.every(pe=>estAbsent(notesPeriode(pe)[el.id]));
+  });
+  return {periodes, moysParPeriode, mga, absAll, rangs: calcRangs(mga)};
+}
+
+function itemsMGA(){
+  const d = mgaData();
+  return DATA.eleves.map(el=>{
+    const abs = d.absAll[el.id];
+    const v = d.mga[el.id];
+    return {sexe: el.sexe, present: !abs, admis: !abs && v!==null && Math.round(v*100)>=1000};
+  });
+}
+
+function renderStats(items){
+  const groupes = [items.filter(i=>i.sexe==='M'), items.filter(i=>i.sexe==='F'), items];
+  const ins = groupes.map(g=>g.length);
+  const pre = groupes.map(g=>g.filter(i=>i.present).length);
+  const adm = groupes.map(g=>g.filter(i=>i.admis).length);
+  const pct = groupes.map((g,k)=> pre[k]>0 ? (adm[k]/pre[k]*100).toFixed(2)+' %' : '—');
+  const sub = '<th>Garçons</th><th>Filles</th><th>Total</th>';
+  const cells = arr => arr.map(v=>`<td>${v}</td>`).join('');
+  return `<table class="stats"><thead>
+    <tr><th colspan="3">INSCRITS</th><th colspan="3">PRESENTS</th><th colspan="3">ADMIS</th><th colspan="3">POURCENTAGE DE REUSSITE</th></tr>
+    <tr>${sub}${sub}${sub}${sub}</tr></thead>
+    <tbody><tr>${cells(ins)}${cells(pre)}${cells(adm)}${cells(pct)}</tr></tbody></table>`;
+}
+
+function blocsEntete(p){
+  const sep = '<hr class="ligne-discontinue"/>';
+  const lignes = [p.ministere, p.direction, p.inspection]
+    .filter(t => t && String(t).trim())
+    .map(t => `<div>${escapeHtml(t)}</div>`);
+  lignes.push(`<div class="ecole">${escapeHtml(p.etablissement||'École')}</div>`);
+  return lignes.join(sep) + (p.coordonnees ? `<div style="margin-top:2px">${escapeHtml(p.coordonnees)}</div>` : '');
+}
+
+function renderPDF(){
+  const p = effP();
+  const el = $('pdf-render');
+
+  const logoCI = p.logoCI ? `<img class="logo-entete" src="${p.logoCI}" alt="CI"/>` : '';
+  const logoEcole = p.logoEcole ? `<img class="logo-entete" src="${p.logoEcole}" alt="École"/>` : '';
+  const ligne = t => t ? `<div>${escapeHtml(t)}</div>` : '';
+
+  const mga = currentFeuille==='mga';
+  const n = mga ? '' : currentFeuille;
+  const dateEval = mga ? '' : (p[dateKey(n)] || '');
+
+  // En-tête : à gauche Ministère > Direction Régionale > Inspection > École > Coordonnées + ligne discontinue 4cm
+  // au centre Classe, Résultats de la composition N°, En date du
+  // à droite République, Logo CI, Devise, Année scolaire
+  let html = `
+    <div class="entete">
+      <div class="col">
+        ${blocsEntete(p)}
+        ${logoEcole}
+      </div>
+      <div class="centre centre-bas">
+        <div class="encadre-eval">
+          <div class="classe-eval">${escapeHtml(p.classe||'—')}</div>
+          ${mga ? '<div class="compo">Moyenne générale annuelle</div>' : `<div class="compo">Résultats de la composition N°${evalNumero(n)}</div>
+          <div class="compo">En date du : ${dateEval ? formatDateFr(dateEval) : '……………'}</div>`}
+        </div>
+      </div>
+      <div class="col">
+        <div class="rep">${escapeHtml(p.republique||'')}</div>
+        ${logoCI}
+        ${p.devise?`<div class="devise">${escapeHtml(p.devise)}</div>`:''}
+        <div style="margin-top:4px"><strong>Année scolaire :</strong> ${escapeHtml(p.anneeScolaire||'……………')}</div>
+      </div>
+    </div>
+  `;
+
+  if(mga){
+    html += `<div class="titre-feuille">Moyenne Générale Annuelle (MGA)</div>
+             <div class="sous-feuille">Synthèse annuelle des évaluations</div>`;
+  }
+
+  html += renderStats(mga ? itemsMGA() : itemsEvaco(n));
+  html += mga ? renderTableMGA() : renderTableEvaco(n);
+
+  html += `
+    <div class="signatures">
+      <div><div class="ligne"></div>LE MAITRE CHARGE DU COURS${p.nomMaitre?`<div class="nom-sign">${escapeHtml(p.nomMaitre)}</div>`:''}</div>
+      <div><div class="ligne"></div>LE DIRECTEUR DE L'ECOLE${p.directeur?`<div class="nom-sign">${escapeHtml(p.directeur)}</div>`:''}</div>
+    </div>
+  `;
+
+  el.innerHTML = html;
+}
+
+function renderTableEvaco(nPeriode){
+  const notesClasse = notesPeriode(nPeriode);
+  if(DATA.eleves.length===0){
+    return '<p style="text-align:center;font-style:italic;font-size:10px">Aucun élève enregistré.</p>';
+  }
+  const st = computeStats(notesClasse, nPeriode);
+  let html = '<table class="t-feuille"><thead><tr><th>N°</th><th>Nom &amp; Prénoms</th>';
+  matActives(nPeriode).forEach(m=>{ html += `<th>${escapeHtml(nomMat(m))}<br><span style="font-weight:600;font-size:7.5px">/ ${fmtBar(baremeOf(m, nPeriode))}</span></th>`; });
+  html += '<th>TOTAL</th><th>MOYENNE</th><th>RANG</th><th>OBSV</th></tr></thead><tbody>';
+  DATA.eleves.forEach((el, i)=>{
+    const n = notesClasse[el.id] || {};
+    const r = st.calc[el.id];
+    html += `<tr><td>${i+1}</td><td class="nm">${escapeHtml(el.nom)} ${escapeHtml(el.prenoms||'')}</td>`;
+    const abs = estAbsent(n);
+    matActives(nPeriode).forEach(m=>{
+      html += `<td>${abs ? '0.00' : (n[m]!==undefined?Number(n[m]).toFixed(2):'—')}</td>`;
+    });
+    html += `<td>${r?fmt(r.total):'—'}</td>`;
+    html += `<td><strong>${r?fmt(r.moy):'—'}</strong></td>`;
+    html += `<td>${rangLabel(st.rangs[el.id])}</td>`;
+    html += `<td>${obsvOf(n, r)}</td></tr>`;
+  });
+  html += '</tbody></table>';
+  return html;
+}
+
+function renderTableMGA(){
+  if(DATA.eleves.length===0){
+    return '<p style="text-align:center;font-style:italic;font-size:10px">Aucun élève enregistré.</p>';
+  }
+  const d = mgaData();
+  let html = '<table class="t-feuille"><thead><tr><th>N°</th><th>Nom &amp; Prénoms</th>';
+  d.periodes.forEach(pe=>{ html += `<th>${escapeHtml(evalNom(pe))}</th>`; });
+  html += '<th>MGA</th><th>RANG</th><th>OBSV</th></tr></thead><tbody>';
+  DATA.eleves.forEach((el, i)=>{
+    html += `<tr><td>${i+1}</td><td class="nm">${escapeHtml(el.nom)} ${escapeHtml(el.prenoms||'')}</td>`;
+    d.moysParPeriode.forEach(m=>{ html += `<td>${fmt(m[el.id])}</td>`; });
+    html += `<td><strong>${fmt(d.mga[el.id])}</strong></td>`;
+    html += `<td>${rangLabel(d.rangs[el.id])}</td>`;
+    html += `<td>${d.absAll[el.id] ? 'Absent(e)' : appreciation(d.mga[el.id])}</td></tr>`;
+  });
+  html += '</tbody></table>';
+  return html;
+}
+
+function formatDateFr(iso){
+  if(!iso) return '';
+  const d = new Date(iso+'T00:00:00');
+  if(isNaN(d)) return iso;
+  return d.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric'});
+}
+
+$('btn-imprimer').addEventListener('click', ()=>{
+  const contenu = $('pdf-render').innerHTML;
+  const p = effP();
+  const css = document.getElementById('feuille-css').textContent.replace(/\.pdf-preview\s+/g,'');
+  const w = window.open('', '_blank');
+  if(!w){ toast('Autorisez les pop-ups'); return; }
+  w.document.write(`
+    <!DOCTYPE html><html><head><meta charset="utf-8"><title>Résultats – ${escapeHtml(p.etablissement||'EtatNotes Pro v1')}</title>
+    <style>
+      @page{size:A4 portrait;margin:0}
+      body{font-family:"Times New Roman",Georgia,serif;color:#000;margin:0;padding:10mm}
+      ${css}
+    </style></head><body>${contenu}</body></html>
+  `);
+  w.document.close();
+  w.focus();
+  setTimeout(()=>{ w.print(); }, 400);
+});
+
+/* =====================================================
+   MODAL
+   ===================================================== */
+let confirmCb = null;
+function confirmAction(titre, msg, cb){
+  $('modal-titre').textContent = titre;
+  $('modal-msg').textContent = msg;
+  $('modal-overlay').classList.add('show');
+  confirmCb = cb;
+}
+$('modal-cancel').addEventListener('click', ()=>{
+  $('modal-overlay').classList.remove('show');
+  confirmCb = null;
+});
+$('modal-ok').addEventListener('click', ()=>{
+  $('modal-overlay').classList.remove('show');
+  if(confirmCb) confirmCb();
+  confirmCb = null;
+});
+
+/* =====================================================
+   OUTILS
+   ===================================================== */
+/* ---------- Sauvegarde / restauration ---------- */
+const APP_NOM = 'EtatNotes Pro v1';
+$('btn-sauvegarder').addEventListener('click', ()=>{
+  saveData();
+  saveUsers();
+  const sauvegarde = {
+    application: APP_NOM,
+    version: 1,
+    date: new Date().toISOString(),
+    donnees: JSON.parse(localStorage.getItem(STORE_KEY) || '{}'),
+    utilisateurs: JSON.parse(localStorage.getItem(USERS_KEY) || '[]')
+  };
+  const jour = new Date().toISOString().slice(0,10);
+  downloadBlob(new Blob([JSON.stringify(sauvegarde)],{type:'application/json'}), 'sauvegarde_EtatNotes_' + jour + '.json');
+  toast('Sauvegarde téléchargée');
+});
+
+$('btn-restaurer').addEventListener('click', ()=>{ $('file-restaurer').click(); });
+$('file-restaurer').addEventListener('change', async e=>{
+  const f = e.target.files[0];
+  e.target.value = '';
+  if(!f) return;
+  let sv = null;
+  try{ sv = JSON.parse(await f.text()); }catch(err){ sv = null; }
+  if(!sv || !sv.donnees || typeof sv.donnees!=='object' || !Array.isArray(sv.utilisateurs)){
+    toast('Ce fichier n\'est pas une sauvegarde valide'); return;
+  }
+  const quand = sv.date ? new Date(sv.date).toLocaleString('fr-FR') : 'date inconnue';
+  confirmAction('Restaurer la sauvegarde',
+    'Les données actuelles de cet appareil seront remplacées par la sauvegarde du ' + quand + '. Continuer ?',
+    ()=>{
+      try{
+        localStorage.setItem(STORE_KEY, JSON.stringify(sv.donnees));
+        localStorage.setItem(USERS_KEY, JSON.stringify(sv.utilisateurs));
+      }catch(err){ toast('Restauration impossible'); return; }
+      location.reload();
+    });
+});
+
+function escapeHtml(s){
+  if(s===undefined || s===null) return '';
+  return String(s)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+}
+
+/* =====================================================
+   INIT
+   ===================================================== */
+/* ---------- Tableaux alphabétique et récapitulatif ---------- */
+// Seuils de coloration (modifiables ici)
+const SEUILS_TAB = { ageSursage: 10, redoublement: 2, scolTotale: 3 };
+
+function triAlpha(liste){
+  return liste.slice().sort((a,b)=>
+    ((a.nom||'') + ' ' + (a.prenoms||'')).localeCompare(((b.nom||'') + ' ' + (b.prenoms||'')), 'fr', {sensitivity:'base'}));
+}
+function ageEleve(el){
+  const an = Number(String(el.dateNaissance || '').slice(0,4));
+  if(!an) return '';
+  return new Date().getFullYear() - an;
+}
+function profilCourant(){
+  return (currentUser && DATA.profils[currentUser.id]) || {};
+}
+
+function fillChants(){
+  const pr = profilCourant();
+  $('ch-chants').value = (pr.chants || []).join('\n');
+  $('ch-recits').value = (pr.recitations || []).join('\n');
+}
+$('btn-save-chants').addEventListener('click', ()=>{
+  if(!currentUser) return;
+  const pr = DATA.profils[currentUser.id] = DATA.profils[currentUser.id] || {};
+  const lignes = t => t.split('\n').map(x=>x.trim()).filter(Boolean);
+  pr.chants = lignes($('ch-chants').value);
+  pr.recitations = lignes($('ch-recits').value);
+  saveData();
+  renderAlphaPreview();
+  toast('Chants et récitations enregistrés');
+});
+
+document.getElementById('tab-sub').addEventListener('click', e=>{
+  const b = e.target.closest('button');
+  if(!b) return;
+  document.querySelectorAll('#tab-sub button').forEach(x=>x.classList.toggle('active', x===b));
+  document.querySelectorAll('#sec-tableaux .subsection').forEach(x=>x.classList.toggle('active', x.id === 'sec-' + b.dataset.sub));
+  if(b.dataset.sub === 'alpha') fillChants();
+});
+
+function htmlAlpha(){
+  const p = effP();
+  const eleves = triAlpha(DATA.eleves);
+  const pr = profilCourant();
+  const bloc = (titre, lignes) => `<div class="bloc-chants"><div class="ch-titre">${titre}</div>` +
+    (lignes || []).map(l=>`<div>${escapeHtml(l)}</div>`).join('') + '</div>';
+  let html = enteteDocument(p, '') + '<div class="titre-feuille titre-bordeau">TABLEAU ALPHABÉTIQUE</div>';
+  html += '<table class="t-tab"><thead><tr><th>N°</th><th>N° MATRIC</th><th>NOM ET PRÉNOMS</th></tr></thead><tbody>';
+  eleves.forEach((el,i)=>{
+    const classeNom = el.sexe==='F' ? ' nom-fille' : '';
+    html += `<tr><td>${i+1}</td><td>${escapeHtml(el.matricule||'')}</td><td class="nm${classeNom}">${escapeHtml((el.nom||'') + ' ' + (el.prenoms||''))}</td></tr>`;
+  });
+  html += '</tbody></table>';
+  html += bloc('CHANTS', pr.chants);
+  html += bloc('RÉCITATION', pr.recitations);
+  html += `<div class="total-tab">EFFECTIF TOTAL ${eleves.length}</div>`;
+  return html;
+}
+
+const AGES_RECAP = [5,6,7,8,9,10,11,12,13];
+const CLASSE_RECAP = [1,2,3];
+const TOTAL_RECAP = [1,2,3,4,5,6];
+
+function compteursRecap(liste){
+  return {
+    age: AGES_RECAP.map(a=>liste.filter(e=>ageEleve(e)===a).length),
+    cl: CLASSE_RECAP.map(c=>liste.filter(e=>Number(e.scolClasse)===c).length),
+    tot: TOTAL_RECAP.map(t=>liste.filter(e=>Number(e.totalScol)===t).length)
+  };
+}
+function sommeCompteurs(a, b){
+  return {
+    age: a.age.map((v,i)=>v + b.age[i]),
+    cl: a.cl.map((v,i)=>v + b.cl[i]),
+    tot: a.tot.map((v,i)=>v + b.tot[i])
+  };
+}
+function ligneTotalRecap(label, c){
+  const cell = v => `<td><strong>${v}</strong></td>`;
+  return `<tr class="ligne-total"><td colspan="4" class="lab">${label}</td>`
+    + c.age.map(cell).join('') + c.cl.map(cell).join('') + c.tot.map(cell).join('') + '</tr>';
+}
+
+function tableauSexeRecap(liste, titre, suffixe = '', classeNom = ''){
+  const lignes = triAlpha(liste).map((el,i)=>{
+    const age = ageEleve(el);
+    const cl = Number(el.scolClasse);
+    const tot = Number(el.totalScol);
+    const cellsAge = AGES_RECAP.map(a=>{
+      const cls = a===age ? (age>=SEUILS_TAB.ageSursage ? 'c-age-sup' : 'c-age') : '';
+      return `<td class="${cls}"></td>`;
+    }).join('');
+    const cellsCl = CLASSE_RECAP.map(c=>{
+      const cls = c===cl ? (cl>=SEUILS_TAB.redoublement ? 'c-classe-red' : 'c-classe') : '';
+      return `<td class="${cls}"></td>`;
+    }).join('');
+    const cellsTot = TOTAL_RECAP.map(t=>`<td class="${t===tot ? 'c-total' : ''}"></td>`).join('');
+    return `<tr><td>${i+1}</td><td>${escapeHtml(el.matricule||'')}</td>`
+      + `<td class="nm ${classeNom}">${escapeHtml((el.nom||'') + ' ' + (el.prenoms||''))}</td>`
+      + `<td>${el.dateNaissance ? formatDateFr(el.dateNaissance) : ''}</td>`
+      + cellsAge + cellsCl + cellsTot + '</tr>';
+  }).join('');
+  const entete = '<thead>'
+    + '<tr><th rowspan="2">N°</th><th rowspan="2">N° MATRIC</th><th rowspan="2">NOM ET PRÉNOMS</th><th rowspan="2">DATE DE NAISSANCE</th>'
+    + `<th colspan="${AGES_RECAP.length}">ÂGE</th><th colspan="${CLASSE_RECAP.length}">SCOLARITÉ CLASSE</th><th colspan="${TOTAL_RECAP.length}">SCOLARITÉ TOTALE</th></tr>`
+    + '<tr>' + AGES_RECAP.map(a=>`<th>${a}</th>`).join('') + CLASSE_RECAP.map(c=>`<th>${c}</th>`).join('') + TOTAL_RECAP.map(t=>`<th>${t}</th>`).join('') + '</tr>'
+    + '</thead>';
+  const total = ligneTotalRecap('TOTAL ' + titre, compteursRecap(liste));
+  return `<div class="sous-titre">${titre}</div><table class="t-recap">${entete}<tbody>${lignes}${total}${suffixe}</tbody></table>`;
+}
+
+function htmlResumeRecap(eleves, filles, garcons){
+  const G = f => garcons.filter(f).length;
+  const F = f => filles.filter(f).length;
+  const red = e => Number(e.scolClasse) > 1;
+  const nonRed = e => !red(e);
+  const bloc = (label, f) =>
+    `<tr><td class="lab" rowspan="2">${label}</td><td class="sub">GARÇONS</td><td>${G(f)}</td><td class="tot" rowspan="2">${G(f)+F(f)}</td></tr>`
+    + `<tr><td class="sub">FILLES</td><td>${F(f)}</td></tr>`;
+  const effectifs = '<table class="t-recap t-resume">'
+    + '<thead><tr><th colspan="4">TABLEAU DES EFFECTIFS</th></tr>'
+    + '<tr><th colspan="2">DÉSIGNATION</th><th>NOMBRE</th><th>TOTAL</th></tr></thead><tbody>'
+    + bloc('EFFECTIFS', ()=>true)
+    + bloc('REDOUBLANT(ES)', red)
+    + bloc('NON REDOUBLANT(ES)', nonRed)
+    + '</tbody></table>';
+
+  const ages = eleves.map(ageEleve).filter(a=>a!=='');
+  const min = ages.length ? Math.min(...ages) : 0;
+  const max = ages.length ? Math.max(...ages) : -1;
+  const plage = [];
+  for(let a = min; a <= max; a++) plage.push(a);
+  const ligneAge = (label, liste) => `<tr><td class="lab">${label}</td>`
+    + plage.map(a=>`<td>${liste.filter(e=>ageEleve(e)===a).length}</td>`).join('') + '</tr>';
+  const ages_tab = plage.length
+    ? '<table class="t-recap t-resume"><thead><tr><th colspan="' + (plage.length+1) + '">TABLEAU DES ÂGES</th></tr>'
+      + '<tr><th>DÉSIGNATION</th>' + plage.map(a=>`<th>${a}</th>`).join('') + '</tr></thead><tbody>'
+      + ligneAge('GARÇONS', garcons) + ligneAge('FILLES', filles) + ligneAge('GARÇONS ET FILLES', eleves)
+      + '</tbody></table>'
+    : '<p class="hint">Aucun âge renseigné.</p>';
+
+  return `<div class="duo"><div class="gauche">${effectifs}</div><div class="droite">${ages_tab}</div></div>`;
+}
+
+function htmlRecap(){
+  const p = effP();
+  const eleves = DATA.eleves;
+  const garcons = eleves.filter(e=>e.sexe==='M');
+  const filles = eleves.filter(e=>e.sexe==='F');
+  let html = enteteDocument(p, '') + '<div class="titre-feuille titre-bordeau">TABLEAU RÉCAPITULATIF</div>'
+    + `<div class="sous-titre titre-bordeau">TABLEAU DE SCOLARITÉ — ${escapeHtml(p.classe||'')} ${escapeHtml(p.anneeScolaire||'')}</div>`;
+  const cG = compteursRecap(garcons);
+  const cF = compteursRecap(filles);
+  html += tableauSexeRecap(garcons, 'GARÇONS');
+  html += tableauSexeRecap(filles, 'FILLES', ligneTotalRecap('TOTAL GÉNÉRAL (GARÇONS + FILLES)', sommeCompteurs(cG, cF)), 'nom-fille-noir');
+  html += htmlResumeRecap(eleves, filles, garcons);
+  const sig = (titre, nom) => `<div><div class="sig-titre">${titre}</div><div class="sig-nom">${escapeHtml(nom||'')}</div></div>`;
+  html += '<div class="signatures">'
+    + sig("L'INSPECTEUR", p.inspecteur)
+    + sig("LE DIRECTEUR DE L'ÉCOLE", p.directeur)
+    + sig('LE MAÎTRE CHARGÉ DU COURS', p.nomMaitre)
+    + '</div>';
+  return html;
+}
+
+function renderAlphaPreview(){
+  const z = $('alpha-render');
+  if(z) z.innerHTML = htmlAlpha();
+}
+function renderRecapPreview(){
+  const z = $('recap-render');
+  if(z) z.innerHTML = htmlRecap();
+}
+$('btn-imp-alpha').addEventListener('click', ()=>imprimerDocument(htmlAlpha(), 'Tableau alphabétique'));
+$('btn-imp-recap').addEventListener('click', ()=>imprimerDocument(htmlRecap(), 'Tableau récapitulatif'));
+
+/* ---------- Évaluations ---------- */
+function renderEvalSelects(){
+  const liste = evaluations();
+  const sp = $('saisie-periode');
+  const cur = sp.value || currentPeriodeNotes;
+  sp.innerHTML = liste.map(e=>`<option value="${escapeHtml(e.id)}">${escapeHtml(e.nom)}</option>`).join('');
+  sp.value = liste.some(e=>e.id===cur) ? cur : (liste[0] ? liste[0].id : '');
+  if(currentFeuille!=='mga' && !liste.some(e=>e.id===currentFeuille)){
+    currentFeuille = liste[0] ? liste[0].id : 'mga';
+  }
+  $('feuille-tabs').innerHTML = liste.map((e,i)=>
+    `<button data-f="${escapeHtml(e.id)}" class="${currentFeuille===e.id?'active':''}">Feuille ${i+1} – ${escapeHtml(e.nom)}</button>`
+  ).join('') + `<button data-f="mga" class="${currentFeuille==='mga'?'active':''}">Feuille MGA</button>`;
+}
+
+function refreshEvaluations(){
+  renderEvalSelects();
+  renderEvaluations();
+  renderRepartitions();
+  if(document.getElementById('sec-pdf').classList.contains('active')) renderPDF();
+}
+
+function renderEvaluations(){
+  const pr = (currentUser && DATA.profils[currentUser.id]) || {};
+  const admin = isAdmin();
+  $('eval-ajout').style.display = '';
+  $('eval-btns').style.display = '';
+  $('eval-hint').textContent = admin
+    ? 'Ajoutez, renommez ou supprimez les évaluations. Elles apparaissent dans la saisie, les feuilles de résultats et les répartitions.'
+    : 'Ajoutez, renommez ou supprimez les évaluations, puis indiquez la date de chacune. Ces modifications ne concernent que votre compte.';
+  $('btn-ev-dates').textContent = '💾 Enregistrer ces évaluations et dates';
+  const liste = evaluations();
+  $('eval-liste').innerHTML = liste.map((e,i)=>`
+    <div class="eval-card" data-id="${escapeHtml(e.id)}">
+      <div class="eval-num">${i+1}</div>
+      <div class="eval-corps">
+        <input class="ev-nom" value="${escapeHtml(e.nom)}" aria-label="Nom de l'évaluation"/>
+        ${admin ? '' : `<label class="fld">Date de l'évaluation</label><input type="date" class="ev-date" value="${escapeHtml(pr[dateKey(e.id)] || '')}"/>`}
+      </div>
+      <div class="eval-actions"><button class="btn rouge ev-del">🗑️ Supprimer</button></div>
+    </div>`).join('') || '<p class="hint">Aucune évaluation.</p>';
+
+  $('eval-liste').querySelectorAll('.ev-del').forEach(btn=>btn.addEventListener('click', ()=>{
+    const id = btn.closest('.eval-card').dataset.id;
+    if(evaluationsEdit().length<=1){ toast('Il faut garder au moins une évaluation'); return; }
+    confirmAction('Supprimer l\'évaluation',
+      `Supprimer « ${evalNom(id)} » de la liste ? Les notes déjà saisies sont conservées.`,
+      ()=>{
+        const cible = evaluationsEdit();
+        const k = cible.findIndex(x=>x.id===id);
+        if(k>=0) cible.splice(k, 1);
+        if(currentPeriodeNotes===id) currentPeriodeNotes = '';
+        saveData();
+        refreshEvaluations();
+        toast('Évaluation supprimée');
+      });
+  }));
+}
+
+// Relève les noms et dates affichés ; renvoie null si une saisie est invalide
+function lireEvaluationsSaisies(){
+  const saisies = [];
+  let erreur = '';
+  document.querySelectorAll('#eval-liste .eval-card').forEach(card=>{
+    const nom = card.querySelector('.ev-nom').value.trim().replace(/\s+/g, ' ');
+    if(!nom && !erreur) erreur = 'Le nom d\'une évaluation ne peut pas être vide';
+    const dateInp = card.querySelector('.ev-date');
+    saisies.push({id: card.dataset.id, nom, date: dateInp ? dateInp.value : null});
+  });
+  const noms = saisies.map(x=>normKey(x.nom));
+  if(!erreur && noms.some((n,i)=>noms.indexOf(n)!==i)) erreur = 'Deux évaluations portent le même nom';
+  if(erreur){ toast(erreur); return null; }
+  return saisies;
+}
+
+function appliquerEvaluationsSaisies(saisies){
+  const liste = evaluationsEdit();
+  saisies.forEach(x=>{
+    const e = liste.find(y=>y.id===x.id);
+    if(e) e.nom = x.nom;
+  });
+  if(!isAdmin() && currentUser){
+    const pr = DATA.profils[currentUser.id] = DATA.profils[currentUser.id] || {};
+    saisies.forEach(x=>{ if(x.date!==null) pr[dateKey(x.id)] = x.date; });
+  }
+}
+
+$('btn-ev-add').addEventListener('click', ()=>{
+  const nom = $('ev-nom-new').value.trim().replace(/\s+/g, ' ');
+  if(!nom){ toast('Donnez un nom à l\'évaluation'); return; }
+  const saisies = lireEvaluationsSaisies();
+  if(!saisies) return;
+  if(saisies.some(x=>normKey(x.nom)===normKey(nom))){ toast('Ce nom existe déjà'); return; }
+  appliquerEvaluationsSaisies(saisies);
+  evaluationsEdit().push({id: 'ev' + Date.now().toString(36) + Math.random().toString(36).slice(2,4), nom});
+  saveData();
+  $('ev-nom-new').value = '';
+  refreshEvaluations();
+  toast('Évaluation ajoutée');
+});
+
+$('btn-ev-dates').addEventListener('click', ()=>{
+  if(!currentUser) return;
+  const saisies = lireEvaluationsSaisies();
+  if(!saisies) return;
+  appliquerEvaluationsSaisies(saisies);
+  saveData();
+  refreshEvaluations();
+  toast('Évaluations et dates enregistrées');
+});
+
+/* ---------- Horloge du bandeau ---------- */
+function majHorloge(){
+  const d = new Date();
+  $('hdr-heure').textContent = d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  $('hdr-date').textContent = d.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+}
+majHorloge();
+setInterval(majHorloge, 1000);
+// Contrôle périodique : un compte dont l'échéance est dépassée est déconnecté
+setInterval(()=>{
+  if(currentUser && compteExpire(currentUser)){
+    toast('Votre compte a expiré. Contactez l\'administrateur.');
+    logout();
+  }
+}, 60000);
+
+function init(){
+  renderEvalSelects();
+  majChampExtrait();
+  buildProfilVerrouForm();
+  fillParamsForm();
+  refreshClasseSelect();
+  renderElevesTable();
+  renderPDF();
+}
+init();
+bootAuth();
+
+</script>
+</body>
+</html>
