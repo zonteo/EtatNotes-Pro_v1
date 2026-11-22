@@ -46,3 +46,15 @@ git push
 ## Remarque
 
 Les données sont enregistrées dans le navigateur de chaque utilisateur. Utiliser régulièrement la fonction **Sauvegarder** (barre du bas, administrateur) pour exporter une copie, et **Restaurer** pour la recharger.
+
+## Déploiement sur Netlify
+
+Le dépôt contient aussi la configuration Netlify :
+
+- `netlify.toml` : dossier publié (racine), dossier des fonctions, redirection `/api/*`
+- `package.json` : métadonnées du projet et scripts `dev` et `deploy`
+- `netlify/functions/sante.mjs` : fonction de test, accessible à l'adresse `/api/sante`
+
+Mise en ligne : sur app.netlify.com, **Add new site > Import an existing project**, choisir le dépôt GitHub. Netlify lit `netlify.toml` automatiquement ; aucune commande de build n'est nécessaire.
+
+Test local (Node.js 18 ou plus récent) : `npm run dev`, puis ouvrir `http://localhost:8888/api/sante`.

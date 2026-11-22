@@ -1,0 +1,16 @@
+{
+  "name": "etatnotes-pro",
+  "version": "1.0.0",
+  "description": "EtatNotes Pro v1 - gestion des notes scolaires",
+  "author": "ZONTE Omer",
+  "license": "UNLICENSED",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "dev": "npx netlify-cli dev",
+    "deploy": "npx netlify-cli deploy --prod"
+  }
+}
