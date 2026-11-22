@@ -45,7 +45,7 @@ git push
 
 ## Remarque
 
-Les données sont enregistrées dans le navigateur de chaque utilisateur. Utiliser régulièrement la fonction **Sauvegarder** (barre du bas, administrateur) pour exporter une copie, et **Restaurer** pour la recharger.
+Sans configuration Firebase, les données restent dans le navigateur de chaque appareil. Une fois la configuration Firebase enregistrée dans **Paramètres > Synchronisation et déploiement**, les données sont synchronisées entre tous les appareils. Utiliser tout de même **Sauvegarder** (barre du bas, administrateur) pour conserver une copie.
 
 ## Déploiement sur Netlify
 
