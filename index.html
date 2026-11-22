@@ -267,6 +267,15 @@ table.saisie td.calc{font-weight:700;white-space:nowrap}
 .sync-ligne span{color:#5b6878;flex:none}
 .sync-ligne strong{text-align:right;word-break:break-all}
 .sync-regles{background:#0f172a;color:#e2e8f0;padding:10px;border-radius:9px;font-size:12px;overflow-x:auto;white-space:pre}
+nav.tabbar a.nav-action{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;font-weight:600;color:var(--bleu);padding:6px 10px;border-radius:10px;text-decoration:none}
+nav.tabbar a.nav-action .ico{font-size:19px;line-height:1}
+@media(max-width:520px){nav.tabbar a.nav-action{flex:1;min-width:0;padding:5px 2px;font-size:9.5px;line-height:1.15;text-align:center}nav.tabbar a.nav-action .ico{font-size:16px}}
+@media(max-width:1024px){
+  body.bar-user{padding-bottom:124px}
+  nav.tabbar.bar-user{display:grid;grid-template-rows:1fr 1fr;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:2px;padding:4px 4px 8px}
+  nav.tabbar.bar-user button,nav.tabbar.bar-user a.nav-action{min-width:0;padding:4px 2px;font-size:10px;white-space:normal;text-align:center;line-height:1.15}
+  nav.tabbar.bar-user .ico{font-size:16px}
+}
 .hdr-user{margin-left:0;display:flex;align-items:center;gap:8px;font-size:12px;text-align:right}
 .hdr-btn{background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.55);border-radius:8px;padding:6px 10px;font-size:12px;font-weight:700;cursor:pointer}
 @media(max-width:480px){header.appbar .sub{display:none}#user-badge{max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}}
@@ -748,6 +757,7 @@ table.saisie td.calc{font-weight:700;white-space:nowrap}
           <div class="lib">Cliquez pour choisir une image</div>
         </div>
         <input type="file" id="file-logo-user" accept="image/*" style="display:none"/>
+        <div style="margin-top:6px"><button class="btn ghost" id="btn-retirer-logo-user">🗑️ Retirer le logo de l'école</button></div>
       </div>
       <div class="grid2" style="margin-top:10px">
         <div><label class="fld">Date d'échéance programmée</label><input type="date" id="ad-echeance"/></div>
@@ -880,6 +890,7 @@ service cloud.firestore {
   <button data-tab="repartitions"><span class="ico">🗂️</span>Répartitions</button>
   <button class="nav-action" id="btn-sauvegarder" title="Sauvegarder les données"><span class="ico">💾</span>Sauvegarder</button>
   <button class="nav-action" id="btn-restaurer" title="Restaurer une sauvegarde"><span class="ico">📂</span>Restaurer</button>
+  <a class="nav-action" id="btn-guide" href="guide-utilisateur.pdf" download="Guide_utilisateur_EtatNotes_Pro_v1.pdf" title="Télécharger le guide d'utilisation"><span class="ico">📖</span>Guide</a>
 </nav>
 <input type="file" id="file-restaurer" accept=".json,application/json" style="display:none"/>
 
@@ -1107,6 +1118,11 @@ function applyRole(){
   });
   // Afficher la barre de sélection utilisateur dans Profil pour l'admin
   $('pf-admin-user-wrap').style.display = isAdmin() ? 'block' : 'none';
+  // Utilisateur : barre du bas sur 2 lignes (téléphone et tablette) et bouton Guide
+  const barreUser = !isAdmin();
+  document.querySelector('nav.tabbar').classList.toggle('bar-user', barreUser);
+  document.body.classList.toggle('bar-user', barreUser);
+  $('btn-guide').style.display = barreUser ? '' : 'none';
 }
 
 function showApp(){
@@ -1748,6 +1764,23 @@ $('file-logo-user').addEventListener('change', async e=>{
   $('file-logo-user').dataset.data = durl;
 });
 
+$('btn-retirer-logo-user').addEventListener('click', ()=>{
+  const uid = isAdmin() ? $('admin-user-select').value : (currentUser && currentUser.id);
+  if(!uid){ toast('Choisissez un utilisateur'); return; }
+  confirmAction('Retirer le logo de l\'école',
+    'Le logo de l\'école ne figurera plus sur vos documents. Vous pourrez en choisir un autre plus tard.',
+    ()=>{
+      const pr = DATA.profils[uid] = DATA.profils[uid] || {};
+      delete pr.logoEcole;
+      pr.logoRetire = true;
+      delete $('file-logo-user').dataset.data;
+      $('file-logo-user').value = '';
+      setUserLogoPreview('');
+      saveData();
+      toast('Logo de l\'école retiré');
+    });
+});
+
 $('btn-save-echeance').addEventListener('click', ()=>{
   const uid = $('admin-user-select').value;
   if(!uid){ toast('Choisissez un utilisateur'); return; }
@@ -1772,6 +1805,7 @@ $('btn-save-admin-profil').addEventListener('click', ()=>{
   pr.nomMaitre = $('ad-nomMaitre').value.trim();
   if($('file-logo-user').dataset.data){
     pr.logoEcole = $('file-logo-user').dataset.data;
+    delete pr.logoRetire;
     delete $('file-logo-user').dataset.data;
   }
   saveData();
@@ -1803,7 +1837,7 @@ function effP(){
   o.ministere = base.ministere || '';
   o.coordonnees = pr.coordonnees || base.coordonnees || '';
   o.logoCI = base.logoCI || '';
-  o.logoEcole = pr.logoEcole || base.logoEcole || '';
+  o.logoEcole = pr.logoRetire ? '' : (pr.logoEcole || base.logoEcole || '');
   return o;
 }
 
@@ -3416,7 +3450,7 @@ setInterval(()=>{
    SYNCHRONISATION EN LIGNE (Firebase) ET PAQUET DE DÉPLOIEMENT
    ===================================================== */
 // Configuration Firebase intégrée lors du téléchargement du paquet (laisser cette ligne telle quelle)
-const FIREBASE_CONFIG_INTEGREE = {"apiKey": "AIzaSyCz12nLv52C2odPc5W_fvh3LXE7y6j73dc", "authDomain": "etatnotes-pro-v1.firebaseapp.com", "projectId": "etatnotes-pro-v1", "storageBucket": "etatnotes-pro-v1.firebasestorage.app", "messagingSenderId": "1014277596476", "appId": "1:1014277596476:web:e7e2428a6dc9ef7cf2aa39"};
+const FIREBASE_CONFIG_INTEGREE = /*FIREBASE_CONFIG_INJECT*/null;
 const FB_URL = 'https://www.gstatic.com/firebasejs/10.12.2/';
 const FB_CONFIG_KEY = 'notascol_firebase_config';
 const NETLIFY_KEY = 'notascol_netlify_info';
@@ -3638,6 +3672,10 @@ async function preparerPaquet(){
   const zip = new JSZip();
   zip.file('index.html', source);
   for(const [nom, contenu] of Object.entries(FICHIERS_DEPLOIEMENT)) zip.file(nom, contenu);
+  try{
+    const g = await fetch(new URL('guide-utilisateur.pdf', location.href), {cache: 'no-store'});
+    if(g.ok) zip.file('guide-utilisateur.pdf', await g.arrayBuffer());
+  }catch(e){ console.warn('Guide non inclus', e); }
   return zip.generateAsync({type: 'blob'});
 }
 
