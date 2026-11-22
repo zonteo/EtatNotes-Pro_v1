@@ -3461,7 +3461,7 @@ function analyserConfigFirebase(texte){
 
 function messageFirebase(e){
   const c = String((e && (e.code || e.message)) || 'erreur inconnue');
-  if(/operation-not-allowed/.test(c)) return 'activez l\'authentification anonyme dans Firebase';
+  if(/operation-not-allowed|admin-restricted-operation/.test(c)) return 'connexion anonyme désactivée : activez le fournisseur Anonyme dans Firebase (Authentication > Sign-in method)';
   if(/permission-denied/.test(c)) return 'accès refusé, vérifiez les règles Firestore';
   if(/invalid-api-key|api-key-not-valid/.test(c)) return 'clé API Firebase invalide';
   if(/network|unavailable|offline/i.test(c)) return 'connexion Internet indisponible';
